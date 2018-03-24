@@ -28,6 +28,7 @@
                  [org.webjars.bower/tether "1.4.3"]
                  [org.webjars/bootstrap "4.0.0"]
                  [org.webjars/font-awesome "5.0.6"]
+                 [prismatic/schema "1.1.7"]
                  [re-frame "0.10.5"]
                  [reagent "0.7.0"]
                  [ring-webjars "0.2.0"]
@@ -37,7 +38,7 @@
                  [selmer "1.11.7"]]
 
   :min-lein-version "2.0.0"
-  
+
   :source-paths ["src/clj" "src/cljc"]
   :test-paths ["test/clj"]
   :resource-paths ["resources" "target/cljsbuild"]
@@ -55,7 +56,7 @@
    :nrepl-port 7002
    :css-dirs ["resources/public/css"]
    :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
-  
+
 
   :profiles
   {:uberjar {:omit-source true
@@ -73,8 +74,8 @@
                  :closure-warnings
                  {:externs-validation :off :non-standard-jsdoc :off}
                  :externs ["react/externs/react.js"]}}}}
-             
-             
+
+
              :aot :all
              :uberjar-name "krueger.jar"
              :source-paths ["env/prod/clj"]
@@ -112,9 +113,9 @@
                       :pretty-print true
                       :closure-defines {"re_frame.trace.trace_enabled_QMARK_" true}
                       :preloads [day8.re-frame-10x.preload]}}}}
-                  
-                  
-                  
+
+
+
                   :doo {:build "test"}
                   :source-paths ["env/dev/clj"]
                   :resource-paths ["env/dev/resources"]
@@ -132,7 +133,7 @@
                       :main "krueger.doo-runner"
                       :optimizations :whitespace
                       :pretty-print true}}}}
-                  
+
                   }
    :profiles/dev {}
    :profiles/test {}})

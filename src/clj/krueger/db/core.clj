@@ -18,7 +18,11 @@
   :start (conman/connect! {:jdbc-url (env :database-url)})
   :stop (conman/disconnect! *db*))
 
-(conman/bind-connection *db* "sql/queries.sql")
+(conman/bind-connection *db*
+                        "sql/attachments.sql"
+                        "sql/comments.sql"
+                        "sql/posts.sql"
+                        "sql/users.sql")
 
 (extend-protocol jdbc/IResultSetReadColumn
   Array

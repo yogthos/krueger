@@ -1,10 +1,18 @@
 (ns krueger.routes.services
-  (:require [ring.util.http-response :refer :all]
-            [compojure.api.sweet :refer :all]
-            [schema.core :as s]
-            [compojure.api.meta :refer [restructure-param]]
-            [buddy.auth.accessrules :refer [restrict]]
-            [buddy.auth :refer [authenticated?]]))
+  (:require
+    [krueger.routes.services.attachments :as attachments]
+    [krueger.routes.services.auth :as auth]
+    [buddy.auth.accessrules :refer [restrict]]
+    [buddy.auth :refer [authenticated?]]
+    [compojure.api.meta :refer [restructure-param]]
+    [compojure.api.sweet :refer :all]
+    [compojure.api.upload :refer [TempFileUpload wrap-multipart-params]]
+    [ring.util.http-response :refer :all]
+    [schema.core :as s]))
+
+(defn admin?
+  [request]
+  (:admin (:identity request)))
 
 (defn access-error [_ _]
   (unauthorized {:error "unauthorized"}))
@@ -22,45 +30,82 @@
   (update-in acc [:letks] into [binding `(:identity ~'+compojure-api-request+)]))
 
 (defapi service-routes
-  {:swagger {:ui "/swagger-ui"
+  {:swagger {:ui   "/swagger-ui"
              :spec "/swagger.json"
-             :data {:info {:version "1.0.0"
-                           :title "Sample API"
+             :data {:info {:version     "1.0.0"
+                           :title       "Sample API"
                            :description "Sample Services"}}}}
-  
-  (GET "/authenticated" []
-       :auth-rules authenticated?
-       :current-user user
-       (ok {:user user}))
+
+  (POST "/api/login" req
+    :return auth/LoginResponse
+    :body-params [userid :- s/Str
+                  pass :- s/Str]
+    :summary "user login handler"
+    (auth/login userid pass req))
+
+  (context "/admin" []
+    :auth-rules admin?
+    :tags ["admin"]
+
+    (POST "/user" []
+      :body-params [screenname :- s/Str
+                    pass :- s/Str
+                    pass-confirm :- s/Str
+                    admin :- s/Bool
+                    belongs-to :- [s/Str]
+                    is-active :- s/Bool]
+      (auth/register! {:screenname   screenname
+                       :pass         pass
+                       :pass-confirm pass-confirm
+                       :admin        admin
+                       :belongs-to   belongs-to
+                       :is-active    is-active}))
+
+    (PUT "/user" []
+      :body-params [user-id :- s/Int
+                    screenname :- s/Str
+                    pass :- (s/maybe s/Str)
+                    pass-confirm :- (s/maybe s/Str)
+                    admin :- s/Bool
+                    belongs-to :- [s/Str]
+                    is-active :- s/Bool]
+      :return auth/LoginResponse
+      (auth/update-user! {:user-id      user-id
+                          :screenname   screenname
+                          :belongs-to   belongs-to
+                          :pass         pass
+                          :pass-confirm pass-confirm
+                          :admin        admin
+                          :is-active    is-active})))
   (context "/api" []
-    :tags ["thingie"]
+    :auth-rules authenticated?
+    :tags ["private"]
 
-    (GET "/plus" []
-      :return       Long
-      :query-params [x :- Long, {y :- Long 1}]
-      :summary      "x+y with query-parameters. y defaults to 1."
-      (ok (+ x y)))
+    (POST "/logout" []
+      :return auth/LogoutResponse
+      :summary "remove the user from the session"
+      (auth/logout))
 
-    (POST "/minus" []
-      :return      Long
-      :body-params [x :- Long, y :- Long]
-      :summary     "x-y with body-parameters."
-      (ok (- x y)))
+    ;;attachments
+    (POST "/media" []
+      :multipart-params [file :- TempFileUpload]
+      :middleware [wrap-multipart-params]
+      :current-user user
+      :summary "handles media upload"
+      :return attachments/AttachmentResult
+      (attachments/upload-media! {:user-id (:user-id user)} file))
 
-    (GET "/times/:x/:y" []
-      :return      Long
-      :path-params [x :- Long, y :- Long]
-      :summary     "x*y with path-parameters"
-      (ok (* x y)))
+    (GET "/media/:id" []
+      :summary "load media attachment from the database matching the filename"
+      :path-params [id :- s/Str]
+      :current-user user
+      (attachments/load-file-data {:user-id (:user-id user)
+                                   :name    id}))
 
-    (POST "/divide" []
-      :return      Double
-      :form-params [x :- Long, y :- Long]
-      :summary     "x/y with form-parameters"
-      (ok (/ x y)))
-
-    (GET "/power" []
-      :return      Long
-      :header-params [x :- Long, y :- Long]
-      :summary     "x^y with header-parameters"
-      (ok (long (Math/pow x y))))))
+    (DELETE "/media/:name" []
+      :summary "delete media from the database"
+      :path-params [name :- s/Str]
+      :current-user user
+      :return attachments/AttachmentResult
+      (attachments/remove-media! {:user-id (:user-id user)
+                                  :name    name}))))
