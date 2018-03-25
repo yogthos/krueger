@@ -1,6 +1,13 @@
 (ns krueger.routes.services.common
-  (:require [clojure.tools.logging :as log]
-            [ring.util.http-response :refer [internal-server-error]]))
+  (:require
+    [clojure.tools.logging :as log]
+    [ring.util.http-response :refer [internal-server-error]]
+    [schema.core :as s]))
+
+(s/defschema Success {:result s/Keyword})
+
+(defn user-id [req]
+  (get-in req [:session :identity :id]))
 
 (defmacro handler
   "wraps handler in a try-catch block with built in logging"

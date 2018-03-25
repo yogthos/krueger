@@ -1,7 +1,11 @@
 (ns krueger.routes.services
   (:require
+    [krueger.db.core :as db]
     [krueger.routes.services.attachments :as attachments]
     [krueger.routes.services.auth :as auth]
+    [krueger.routes.services.comments :as comments]
+    [krueger.routes.services.common :as common]
+    [krueger.routes.services.posts :as posts]
     [buddy.auth.accessrules :refer [restrict]]
     [buddy.auth :refer [authenticated?]]
     [compojure.api.meta :refer [restructure-param]]
@@ -85,6 +89,49 @@
       :return auth/LogoutResponse
       :summary "remove the user from the session"
       (auth/logout))
+
+    (GET "/post" []
+          :return posts/Post
+          :query-params [id :- String]
+          :summary "return post with the given id"
+          (ok (db/post-by-id {:id id})))
+    (GET "/page" []
+          :return posts/PostPreviews
+          :query-params [category :- String page :- Long]
+          :summary "return posts with the given page offset"
+          (ok (db/get-post-previews category page)))
+
+    (POST "/submit-post" req
+           :return common/Success
+           :body-params [post :- posts/PostSubmission]
+           :summary "new post submission"
+           (do
+             (db/save-post!
+               (assoc post :author (common/user-id req)))
+             (ok {:result :ok})))
+
+    (POST "/up-vote-post" req
+           :return common/Success
+           :body-params [id :- String]
+           :summary "up-vote the post with the given id"
+           (do
+             (db/upvote-post! (common/user-id req) id)
+             (ok {:result :ok})))
+
+    (POST "/down-vote-post" req
+           :return common/Success
+           :body-params [id :- String]
+           :summary "down-vote the post with the given id"
+           (do
+             (db/downvote-post! (common/user-id req) id)
+             (ok {:result :ok})))
+    (POST "/add-comment" []
+           :return common/Success
+           :body-params [comment :- comments/CommentSubmission]
+           :summary "adds a comment to the post"
+           (do
+             (db/add-post-comment! comment)
+             (ok {:result :ok})))
 
     ;;attachments
     (POST "/media" []

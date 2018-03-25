@@ -4,7 +4,7 @@ INSERT INTO posts
   (title, author, preview, url, text, upvotes, downvotes)
   VALUES (:title, :author, :preview, :url, :text, :upvotes, :downvotes)
 
--- :name get-post :? :1
+-- :name post-by-id :? :1
 -- :doc retrieve a post using the id
 SELECT id, author, title, preview, url, text, upvotes, downvotes, timestamp
   FROM posts
@@ -16,7 +16,7 @@ SELECT id, author, title, preview, url, upvotes, downvotes, timestamp
   FROM posts
   LIMIT :limit OFFSET :offset
 
--- :name total-posts :? :*
+-- :name total-posts :? :1
 -- :doc count posts
 SELECT count(*)
   FROM posts

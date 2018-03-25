@@ -3,7 +3,8 @@
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
 
-  :dependencies [[buddy "2.0.0"]
+  :dependencies [[alpha-id "0.2"]
+                 [buddy "2.0.0"]
                  [clj-time "0.14.2"]
                  [cljs-ajax "0.7.3"]
                  [compojure "1.6.0"]

@@ -1,5 +1,6 @@
 (ns krueger.db.core
   (:require
+    [alpha-id.core :refer [encode-64 decode-64]]
     [cheshire.core :refer [generate-string parse-string]]
     [clj-time.jdbc]
     [clojure.java.jdbc :as jdbc]
@@ -39,9 +40,9 @@
         value))))
 
 (defn to-pg-json [value]
-      (doto (PGobject.)
-            (.setType "jsonb")
-            (.setValue (generate-string value))))
+  (doto (PGobject.)
+    (.setType "jsonb")
+    (.setValue (generate-string value))))
 
 (extend-type clojure.lang.IPersistentVector
   jdbc/ISQLParameter
@@ -58,3 +59,50 @@
   (sql-value [value] (to-pg-json value))
   IPersistentVector
   (sql-value [value] (to-pg-json value)))
+
+(defstate posts-per-page
+  :start (or (env :posts-per-page) 10))
+
+;;; posts
+(defn get-post-previews [category page]
+  ;;TODO: filter by category
+  ;;TODO: update to create a single sql query?
+  {:pages (-> (total-posts {}) :count (/ posts-per-page) int)
+   :page  (map
+            #(update % :id encode-64)
+            (post-previews {:limit posts-per-page :offset page}))})
+
+(defn save-post! [post]
+  (add-post!
+    (merge {:text      nil
+            :url       nil
+            :preview   nil
+            :upvotes   0
+            :downvotes 0}
+           post)))
+
+(defn get-post-by-slug [slug]
+  (let [id (decode-64 slug)]
+    (-> (post-by-id {:id id})
+        first
+        (update :id encode-64)
+        (assoc :comments (get-comments {:post id})))))
+
+(defn upvote-post! [userid postid]
+  (jdbc/with-db-transaction [t-conn *db*]
+    (when-not (upvoted? {:userid userid :postid postid} t-conn)
+      (upvote! {:id (decode-64 postid)} t-conn)
+      (set-votes! {:upvoted true :downvoted false :userid userid :postid postid} t-conn))))
+
+(defn downvote-post! [userid postid]
+  (jdbc/with-db-transaction [t-conn *db*]
+    (when-not (upvoted? {:userid userid :postid postid} t-conn)
+      (downvote! {:id (decode-64 postid)} t-conn)
+      (set-votes! {:upvoted false
+                   :downvoted true
+                   :userid userid
+                   :postid postid}
+                  t-conn))))
+
+(defn add-post-comment! [comment]
+  (add-comment! (assoc comment :upvotes 0 :downvotes 0)))
