@@ -4,7 +4,6 @@
     [krueger.db.posts :as posts-db]
     [krueger.routes.services.attachments :as attachments]
     [krueger.routes.services.auth :as auth]
-    [krueger.routes.services.comments :as comments]
     [krueger.routes.services.common :as common]
     [krueger.routes.services.posts :as posts]
     [buddy.auth.accessrules :refer [restrict]]
@@ -127,13 +126,12 @@
       (do
         (posts-db/downvote-post! (common/user-id req) id)
         (ok {:result :ok})))
-    (POST "/add-comment" []
-      :return common/Success
-      :body-params [comment :- comments/CommentSubmission]
+
+    (POST "/add-comment" req
+      :return posts/CommentSubmissionResult
+      :body-params [comment :- posts/CommentSubmission]
       :summary "adds a comment to the post"
-      (do
-        (posts-db/add-post-comment! comment)
-        (ok {:result :ok})))
+      (ok (posts-db/add-post-comment! (assoc comment :author (common/user-id req)))))
 
     ;;attachments
     (POST "/media" []

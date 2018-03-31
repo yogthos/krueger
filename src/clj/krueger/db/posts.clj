@@ -37,35 +37,46 @@
            post)))
 
 (defn get-post-by-slug [slug]
-  (let [id   (decode-64 slug)]
+  (let [id (decode-64 slug)]
     (-> (post-by-id {:id id})
         (assoc :id slug)
         (update :tags #(when % (tags-by-ids {:ids %})))
         (assoc :comments (get-comments {:post id})))))
 
-(defn upvote-post! [userid postid]
-  (jdbc/with-db-transaction [t-conn *db*]
-    (when-not (upvoted? {:userid userid :postid postid} t-conn)
-      (upvote! {:id (decode-64 postid)} t-conn)
-      (set-votes! {:upvoted true :downvoted false :userid userid :postid postid} t-conn))))
+(defn upvote-post! [email slug]
+  (let [postid (decode-64 slug)]
+    (jdbc/with-db-transaction [t-conn *db*]
+      (when-not (upvoted? t-conn {:email email :postid postid})
+        (upvote! t-conn {:id postid})
+        (set-votes! t-conn {:upvoted true :downvoted false :email email :postid postid})))))
 
-(defn downvote-post! [userid postid]
-  (jdbc/with-db-transaction [t-conn *db*]
-    (when-not (upvoted? {:userid userid :postid postid} t-conn)
-      (downvote! {:id (decode-64 postid)} t-conn)
-      (set-votes! {:upvoted   false
-                   :downvoted true
-                   :userid    userid
-                   :postid    postid}
-                  t-conn))))
+(defn downvote-post! [email slug]
+  (let [postid (decode-64 slug)]
+    (jdbc/with-db-transaction [t-conn *db*]
+      (when-not (upvoted? t-conn {:email email :postid postid})
+        (downvote! t-conn {:id postid})
+        (set-votes! t-conn
+                    {:upvoted   false
+                     :downvoted true
+                     :email     email
+                     :postid    postid})))))
 
 (defn add-post-comment! [comment]
-  (add-comment! (assoc comment :upvotes 0 :downvotes 0)))
+  (-> (merge {:parent nil} comment)
+      (update :post decode-64)
+      (assoc :upvotes 0 :downvotes 0)
+      (add-comment!)))
 
-#_(jdbc/query *db* ["select * from posts"])
+#_(add-post-comment!
+    {:parent  1
+     :author  "bob@bob.com"
+     :content "another test comment"
+     :post    "5"})
+
+#_(jdbc/query *db* ["select * from comments"])
 
 #_(tags-by-ids {:ids (:tags (first (jdbc/query *db* ["select * from posts"])))})
-#_ (tags-by-ids {:ids [1 2]})
+#_(tags-by-ids {:ids [1 2]})
 
 #_(get-post-by-slug "5")
 

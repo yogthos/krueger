@@ -1,5 +1,5 @@
 CREATE TABLE post_votes
-(userid VARCHAR(20),
+(email VARCHAR(50),
  postid INTEGER,
  upvoted BOOLEAN,
  downvoted BOOLEAN);

@@ -8,7 +8,7 @@
 
 (s/defschema Comment
   {:id                      s/Num
-   (s/optional-key :parent) s/Num
+   (s/optional-key :parent) (s/maybe s/Num)
    :author                  String
    :content                 String
    :timestamp               DateTime
@@ -16,10 +16,12 @@
    :downvotes               s/Num})
 
 (s/defschema CommentSubmission
-  {:post                    s/Num
+  {:post                    String
    (s/optional-key :parent) s/Num
-   :author                  String
    :content                 String})
+
+(s/defschema CommentSubmissionResult
+  {:id s/Num})
 
 ;;post can either have a URL pointing to an external link or
 ;;text for self submition/question post, e.g: how do I setup a REPL
