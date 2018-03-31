@@ -1,18 +1,18 @@
 -- :name add-post! :! :n
 -- :doc create a new post row
 INSERT INTO posts
-  (title, author, preview, url, text, upvotes, downvotes)
-  VALUES (:title, :author, :preview, :url, :text, :upvotes, :downvotes)
+  (title, author, preview, url, text, upvotes, downvotes, tags)
+  VALUES (:title, :author, :preview, :url, :text, :upvotes, :downvotes, :tags)
 
 -- :name post-by-id :? :1
 -- :doc retrieve a post using the id
-SELECT id, author, title, preview, url, text, upvotes, downvotes, timestamp
+SELECT id, author, title, preview, url, text, tags, upvotes, downvotes, timestamp
   FROM posts
   WHERE id = :id
 
 -- :name post-previews :? :*
 -- :doc retrieve previews given the offset
-SELECT id, author, title, preview, url, upvotes, downvotes, timestamp
+SELECT id, author, title, preview, url, tags, upvotes, downvotes, timestamp
   FROM posts
   LIMIT :limit OFFSET :offset
 
