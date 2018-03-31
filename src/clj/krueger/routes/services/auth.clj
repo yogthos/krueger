@@ -13,12 +13,12 @@
   (:import java.util.Date))
 
 (def User
-  {:user-id                         s/Int
-   :screenname                      (s/maybe s/Str)
-   :admin                           s/Bool
-   :is-active                       s/Bool
-   :last-login                      Date
-   (s/optional-key :account-name)   (s/maybe s/Str)
+  {:screenname                      s/Str
+   :email                           s/Str
+   :admin                           (s/maybe s/Bool)
+   :bio                             (s/maybe s/Str)
+   :is-active                       (s/maybe s/Bool)
+   :last-login                      (s/maybe Date)
    (s/optional-key :client-ip)      s/Str
    (s/optional-key :source-address) s/Str})
 
@@ -33,17 +33,31 @@
 (def LogoutResponse
   {:result s/Str})
 
-(defn authenticate [userid pass]
-  (when-let [user (db/get-user {:id userid})]
-    (when (hashers/check pass (:pass user))
-      (dissoc user :pass))))
+(defmacro timed [exp timeout]
+  `(let [start-time# (System/currentTimeMillis)
+         result#     (try ~exp (catch Exception e# e#))
+         end-time#   (System/currentTimeMillis)
+         wait-time#  (- ~timeout (- end-time# start-time#))]
+     (when (pos? wait-time#)
+       (Thread/sleep wait-time#))
+     (if (instance? Exception result#)
+       (throw result#)
+       result#)))
 
-(handler register! [user]
+(defn authenticate [email pass]
+  (timed
+    (when-let [user (db/get-user {:email email})]
+      (when (hashers/check pass (:pass user))
+        (dissoc user :pass)))
+    500))
+
+(handler register! [user {:keys [remote-addr]}]
+  (log/info "registration attempt for" (dissoc user :pass) "from" remote-addr)
   (if-let [errors (v/validate-create-user user)]
     (do
       (log/error "error creating user:" errors)
       (bad-request {:error "invalid user"}))
-    #_(db/insert-user-with-belongs-to!
+    (db/create-user!
       (-> user
           (dissoc :pass-confirm)
           (update-in [:pass] hashers/encrypt)))))
@@ -56,28 +70,34 @@
     (ok
       {:user nil
        #_(db/update-or-insert-user-with-belongs-to!
-         (cond-> user
-                 pass (update :pass hashers/encrypt)
-                 pass (assoc :update-password? true)))})))
+           (cond-> user
+                   pass (update :pass hashers/encrypt)
+                   pass (assoc :update-password? true)))})))
 
 
-(defn login [userid pass {:keys [remote-addr server-name session]}]
-  (if-let [user (when-let [user (authenticate userid pass)]
-                  (-> user
-                      (merge {:member-of    []
-                              :account-name userid})))]
-    (let [user (-> user
-                   (dissoc :pass)
-                   (merge
-                     {:client-ip      remote-addr
-                      :source-address server-name}))]
-      (log/info "user:" userid "successfully logged in from" remote-addr server-name)
+(defn login [email pass {:keys [remote-addr server-name session]}]
+  (if-let [user (some-> (authenticate email pass)
+                        (dissoc :pass)
+                        (merge
+                          {:client-ip      remote-addr
+                           :source-address server-name}))]
+    (do
+      (log/info "user:" email "successfully logged in from" remote-addr server-name)
       (-> {:user user}
           (ok)
           (assoc :session (assoc session :identity user))))
     (do
-      (log/info "login failed for" userid remote-addr server-name)
+      (log/info "login failed for" email remote-addr server-name)
       (unauthorized {:error "The username or password was incorrect."}))))
 
 (handler logout []
   (assoc (ok {:result "ok"}) :session nil))
+
+#_(db/create-user!
+    (-> {:screenname "bob"
+         :email      "bob@bob.com"
+         :pass       "pass"}
+        (dissoc :pass-confirm)
+        (update-in [:pass] hashers/encrypt)))
+
+#_(authenticate "bob@bob.com" "pass")

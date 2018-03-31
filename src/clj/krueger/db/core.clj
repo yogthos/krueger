@@ -1,6 +1,8 @@
 (ns krueger.db.core
   (:require
     [alpha-id.core :refer [encode-64 decode-64]]
+    [camel-snake-kebab.extras :refer [transform-keys]]
+    [camel-snake-kebab.core :refer [->kebab-case-keyword]]
     [cheshire.core :refer [generate-string parse-string]]
     [clj-time.jdbc]
     [clojure.java.jdbc :as jdbc]
@@ -13,7 +15,8 @@
            clojure.lang.IPersistentVector
            [java.sql
             BatchUpdateException
-            PreparedStatement]))
+            PreparedStatement]
+           java.util.UUID))
 
 (defstate ^:dynamic *db*
   :start (conman/connect! {:jdbc-url (env :database-url)})
@@ -25,9 +28,34 @@
                         "sql/posts.sql"
                         "sql/users.sql")
 
+(defn result-one-snake->kebab
+  [this result options]
+  (->> (hugsql.adapter/result-one this result options)
+       (transform-keys ->kebab-case-keyword)))
+
+(defn result-many-snake->kebab
+  [this result options]
+  (->> (hugsql.adapter/result-many this result options)
+       (map #(transform-keys ->kebab-case-keyword %))))
+
+(defmethod hugsql.core/hugsql-result-fn :1 [sym]
+  'krueger.db.core/result-one-snake->kebab)
+
+(defmethod hugsql.core/hugsql-result-fn :one [sym]
+  'krueger.db.core/result-one-snake->kebab)
+
+(defmethod hugsql.core/hugsql-result-fn :* [sym]
+  'krueger.db.core/result-many-snake->kebab)
+
+(defmethod hugsql.core/hugsql-result-fn :many [sym]
+  'krueger.db.core/result-many-snake->kebab)
+
 (extend-protocol jdbc/IResultSetReadColumn
   Array
   (result-set-read-column [v _ _] (vec (.getArray v)))
+
+  UUID
+  (result-set-read-column [v _ _] (.toString v))
 
   PGobject
   (result-set-read-column [pgobj _metadata _index]

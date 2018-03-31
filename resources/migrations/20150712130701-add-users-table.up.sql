@@ -1,8 +1,7 @@
 CREATE TABLE users
-(id VARCHAR(20) PRIMARY KEY,
- first_name VARCHAR(30),
- last_name VARCHAR(30),
- email VARCHAR(30),
+(email VARCHAR(50) PRIMARY KEY,
+ sceenname VARCHAR(50),
+ bio TEXT,
  admin BOOLEAN,
  last_login TIME,
  is_active BOOLEAN,

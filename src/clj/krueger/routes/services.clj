@@ -42,28 +42,27 @@
 
   (POST "/api/login" req
     :return auth/LoginResponse
-    :body-params [userid :- s/Str
+    :body-params [email :- s/Str
                   pass :- s/Str]
     :summary "user login handler"
-    (auth/login userid pass req))
+    (auth/login email pass req))
+
+  (POST "/api/register" req
+    :return auth/LoginResponse
+    :body-params [screnname :- s/Str
+                  email :- s/Str
+                  pass :- s/Str]
+    :summary "user registration handler"
+    (auth/register!
+      {:screnname screnname
+       :email     email
+       :pass      pass}
+      req)
+    (ok {:result :ok}))
 
   (context "/admin" []
     :auth-rules admin?
     :tags ["admin"]
-
-    (POST "/user" []
-      :body-params [screenname :- s/Str
-                    pass :- s/Str
-                    pass-confirm :- s/Str
-                    admin :- s/Bool
-                    belongs-to :- [s/Str]
-                    is-active :- s/Bool]
-      (auth/register! {:screenname   screenname
-                       :pass         pass
-                       :pass-confirm pass-confirm
-                       :admin        admin
-                       :belongs-to   belongs-to
-                       :is-active    is-active}))
 
     (PUT "/user" []
       :body-params [user-id :- s/Int
@@ -91,47 +90,47 @@
       (auth/logout))
 
     (GET "/post" []
-          :return posts/Post
-          :query-params [id :- String]
-          :summary "return post with the given id"
-          (ok (db/post-by-id {:id id})))
+      :return posts/Post
+      :query-params [id :- String]
+      :summary "return post with the given id"
+      (ok (db/post-by-id {:id id})))
     (GET "/page" []
-          :return posts/PostPreviews
-          :query-params [category :- String page :- Long]
-          :summary "return posts with the given page offset"
-          (ok (db/get-post-previews category page)))
+      :return posts/PostPreviews
+      :query-params [category :- String page :- Long]
+      :summary "return posts with the given page offset"
+      (ok (db/get-post-previews category page)))
 
     (POST "/submit-post" req
-           :return common/Success
-           :body-params [post :- posts/PostSubmission]
-           :summary "new post submission"
-           (do
-             (db/save-post!
-               (assoc post :author (common/user-id req)))
-             (ok {:result :ok})))
+      :return common/Success
+      :body-params [post :- posts/PostSubmission]
+      :summary "new post submission"
+      (do
+        (db/save-post!
+          (assoc post :author (common/user-id req)))
+        (ok {:result :ok})))
 
     (POST "/up-vote-post" req
-           :return common/Success
-           :body-params [id :- String]
-           :summary "up-vote the post with the given id"
-           (do
-             (db/upvote-post! (common/user-id req) id)
-             (ok {:result :ok})))
+      :return common/Success
+      :body-params [id :- String]
+      :summary "up-vote the post with the given id"
+      (do
+        (db/upvote-post! (common/user-id req) id)
+        (ok {:result :ok})))
 
     (POST "/down-vote-post" req
-           :return common/Success
-           :body-params [id :- String]
-           :summary "down-vote the post with the given id"
-           (do
-             (db/downvote-post! (common/user-id req) id)
-             (ok {:result :ok})))
+      :return common/Success
+      :body-params [id :- String]
+      :summary "down-vote the post with the given id"
+      (do
+        (db/downvote-post! (common/user-id req) id)
+        (ok {:result :ok})))
     (POST "/add-comment" []
-           :return common/Success
-           :body-params [comment :- comments/CommentSubmission]
-           :summary "adds a comment to the post"
-           (do
-             (db/add-post-comment! comment)
-             (ok {:result :ok})))
+      :return common/Success
+      :body-params [comment :- comments/CommentSubmission]
+      :summary "adds a comment to the post"
+      (do
+        (db/add-post-comment! comment)
+        (ok {:result :ok})))
 
     ;;attachments
     (POST "/media" []

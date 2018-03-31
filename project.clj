@@ -5,9 +5,11 @@
 
   :dependencies [[alpha-id "0.2"]
                  [buddy "2.0.0"]
+                 [camel-snake-kebab "0.4.0"]
                  [clj-time "0.14.2"]
                  [cljs-ajax "0.7.3"]
                  [compojure "1.6.0"]
+                 [com.draines/postal "2.0.2"]
                  [conman "0.7.6"]
                  [cprop "0.1.11"]
                  [funcool/struct "1.2.0"]
