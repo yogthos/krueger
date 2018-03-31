@@ -21,11 +21,9 @@
 ;;; posts
 (defn get-post-previews [category page]
   ;;TODO: filter by category
-  ;;TODO: update to create a single sql query?
-  {:pages (-> (total-posts {}) :count (/ posts-per-page) int)
-   :page  (map
-            #(update % :id encode-64)
-            (post-previews {:limit posts-per-page :offset page}))})
+  {:page (map
+           #(update % :id encode-64)
+           (post-previews {:limit posts-per-page :offset page}))})
 
 (defn save-post! [post]
   (add-post!
@@ -84,3 +82,5 @@
                :tags   [1 2]
                :text   "blah"
                :author "bob@bob.com"})
+
+#_(get-post-previews "foo" 0)

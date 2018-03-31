@@ -46,12 +46,12 @@
 (s/defschema PostPreview
   {:id                       String
    :author                   String
-   :tags                     [String]
-   (s/optional-key :preview) String
+   :tags                     [s/Num]
+   (s/optional-key :preview) (s/maybe String)
    :title                    String
-   (s/optional-key :url)     String
+   (s/optional-key :url)     (s/maybe String)
    :timestamp                DateTime
-   :votes                    s/Num})
+   :upvotes                  s/Num
+   :downvotes                s/Num})
 
-(s/defschema PostPreviews {:pages s/Num
-                           :page  [PostPreview]})
+(s/defschema PostPreviews {:page [PostPreview]})
