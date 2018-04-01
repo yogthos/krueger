@@ -11,7 +11,7 @@
                  [cljs-ajax "0.7.3"]
                  [compojure "1.6.0"]
                  [com.draines/postal "2.0.2"]
-                 [conman "0.7.6"]
+                 [conman "0.7.7"]
                  [cprop "0.1.11"]
                  [funcool/struct "1.2.0"]
                  [luminus-immutant "0.2.4"]
@@ -19,20 +19,18 @@
                  [luminus-nrepl "0.1.4"]
                  [luminus/ring-ttl-session "0.3.2"]
                  [markdown-clj "1.0.2"]
-                 [metosin/compojure-api "1.1.11"]
+                 [metosin/compojure-api "1.1.12"]
                  [metosin/muuntaja "0.5.0"]
                  [metosin/ring-http-response "0.9.0"]
                  [mount "0.1.12"]
                  [org.clojure/clojure "1.9.0"]
-                 [org.clojure/clojurescript "1.9.946" :scope "provided"]
+                 [org.clojure/clojurescript "1.10.238" :scope "provided"]
                  [org.clojure/tools.cli "0.3.5"]
                  [org.clojure/tools.logging "0.4.0"]
                  [org.clojure/tools.reader "1.2.2"]
-                 [org.postgresql/postgresql "42.2.1"]
-                 [org.webjars.bower/tether "1.4.3"]
-                 [org.webjars/bootstrap "4.0.0"]
-                 [org.webjars/font-awesome "5.0.6"]
-                 [prismatic/schema "1.1.7"]
+                 [org.postgresql/postgresql "42.2.2"]
+                 [org.webjars/font-awesome "5.0.8"]
+                 [prismatic/schema "1.1.8"]
                  [re-frame "0.10.5"]
                  [reagent "0.7.0"]
                  [ring-webjars "0.2.0"]
@@ -52,9 +50,7 @@
 
   :plugins [[migratus-lein "0.5.4"]
             [lein-cljsbuild "1.1.5"]
-            [lein-immutant "2.1.0"]
-            [macchiato/lein-npm "0.6.4"]]
-  :npm {:dependencies [[semantic-ui-react "0.79.0"]]}
+            [lein-immutant "2.1.0"]]
   :clean-targets ^{:protect false}
 [:target-path [:cljsbuild :builds :app :compiler :output-dir] [:cljsbuild :builds :app :compiler :output-to]]
   :figwheel
@@ -67,7 +63,7 @@
   :profiles
   {:uberjar {:omit-source    true
              :prep-tasks     ["compile"
-                              ["npm" "install"]
+                              #_["npm" "install"]
                               ["cljsbuild" "once" "min"]]
              :cljsbuild
              {:builds
@@ -89,21 +85,19 @@
              :source-paths   ["env/prod/clj"]
              :resource-paths ["env/prod/resources"]}
 
-   :dev     {:prep-tasks     [["npm" "install"]]
-             :jvm-opts       ["-server" "-Dconf=dev-config.edn"]
+   :dev     {:jvm-opts       ["-server" "-Dconf=dev-config.edn"]
              :dependencies   [[binaryage/devtools "0.9.9"]
                               [com.cemerick/piggieback "0.2.2"]
-                              [day8.re-frame/re-frame-10x "0.2.0"]
-                              [doo "0.1.8"]
+                              [day8.re-frame/re-frame-10x "0.3.0"]
+                              [doo "0.1.10"]
                               [figwheel-sidecar "0.5.15"]
                               [pjstadig/humane-test-output "0.8.3"]
                               [prone "1.5.0"]
                               [ring/ring-devel "1.6.3"]
                               [ring/ring-mock "0.3.2"]]
              :plugins        [[com.jakemccrary/lein-test-refresh "0.19.0"]
-                              [lein-doo "0.1.8"]
-                              [lein-figwheel "0.5.15"]
-                              [org.clojure/clojurescript "1.9.946"]]
+                              [lein-doo "0.1.10"]
+                              [lein-figwheel "0.5.15"]]
              :cljsbuild
              {:builds
               {:app
@@ -118,7 +112,11 @@
                  :optimizations   :none
                  :pretty-print    true
                  :closure-defines {"re_frame.trace.trace_enabled_QMARK_" true}
-                 :preloads        [day8.re-frame-10x.preload]}}}}
+                 :preloads        [day8.re-frame-10x.preload]
+                 :install-deps true
+                 :npm-deps {:react "15.6.1"
+                            :react-dom "15.6.1"
+                            :semantic-ui-react "0.79.0"}}}}}
 
 
 
@@ -128,8 +126,7 @@
              :repl-options   {:init-ns user}
              :injections     [(require 'pjstadig.humane-test-output)
                               (pjstadig.humane-test-output/activate!)]}
-   :test    {:prep-tasks     [["npm" "install"]]
-             :jvm-opts       ["-server" "-Dconf=test-config.edn"]
+   :test    {:jvm-opts       ["-server" "-Dconf=test-config.edn"]
              :resource-paths ["env/test/resources"]
              :cljsbuild
              {:builds
