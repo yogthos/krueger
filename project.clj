@@ -1,8 +1,9 @@
-(defproject krueger "0.1.0-SNAPSHOT"
+(defproject krueger "0.1.0"
 
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
-
+  :description "federated news"
+  :url "https://github.com/yogthos/krueger"
+  :license {:name "MIT License"
+            :url "https://opensource.org/licenses/MIT"}
   :dependencies [[alpha-id "0.2"]
                  [buddy "2.0.0"]
                  [camel-snake-kebab "0.4.0"]
@@ -51,92 +52,91 @@
 
   :plugins [[migratus-lein "0.5.4"]
             [lein-cljsbuild "1.1.5"]
-            [lein-immutant "2.1.0"]]
+            [lein-immutant "2.1.0"]
+            [macchiato/lein-npm "0.6.4"]]
+  :npm {:dependencies [[semantic-ui-react "0.79.0"]]}
   :clean-targets ^{:protect false}
-  [:target-path [:cljsbuild :builds :app :compiler :output-dir] [:cljsbuild :builds :app :compiler :output-to]]
+[:target-path [:cljsbuild :builds :app :compiler :output-dir] [:cljsbuild :builds :app :compiler :output-to]]
   :figwheel
   {:http-server-root "public"
-   :nrepl-port 7002
-   :css-dirs ["resources/public/css"]
+   :nrepl-port       7002
+   :css-dirs         ["resources/public/css"]
    :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
 
 
   :profiles
-  {:uberjar {:omit-source true
-             :prep-tasks ["compile" ["cljsbuild" "once" "min"]]
+  {:uberjar {:omit-source    true
+             :prep-tasks     ["compile"
+                              ["npm" "install"]
+                              ["cljsbuild" "once" "min"]]
              :cljsbuild
              {:builds
               {:min
                {:source-paths ["src/cljc" "src/cljs" "env/prod/cljs"]
                 :compiler
-                {:output-dir "target/cljsbuild/public/js"
-                 :output-to "target/cljsbuild/public/js/app.js"
-                 :source-map "target/cljsbuild/public/js/app.js.map"
+                {:output-dir    "target/cljsbuild/public/js"
+                 :output-to     "target/cljsbuild/public/js/app.js"
+                 :source-map    "target/cljsbuild/public/js/app.js.map"
                  :optimizations :advanced
-                 :pretty-print false
+                 :pretty-print  false
                  :closure-warnings
-                 {:externs-validation :off :non-standard-jsdoc :off}
-                 :externs ["react/externs/react.js"]}}}}
+                                {:externs-validation :off :non-standard-jsdoc :off}
+                 :externs       ["react/externs/react.js"]}}}}
 
 
-             :aot :all
-             :uberjar-name "krueger.jar"
-             :source-paths ["env/prod/clj"]
+             :aot            :all
+             :uberjar-name   "krueger.jar"
+             :source-paths   ["env/prod/clj"]
              :resource-paths ["env/prod/resources"]}
 
-   :dev           [:project/dev :profiles/dev]
-   :test          [:project/dev :project/test :profiles/test]
-
-   :project/dev  {:jvm-opts ["-server" "-Dconf=dev-config.edn"]
-                  :dependencies [[binaryage/devtools "0.9.9"]
-                                 [com.cemerick/piggieback "0.2.2"]
-                                 [day8.re-frame/re-frame-10x "0.2.0"]
-                                 [doo "0.1.8"]
-                                 [figwheel-sidecar "0.5.15"]
-                                 [pjstadig/humane-test-output "0.8.3"]
-                                 [prone "1.5.0"]
-                                 [ring/ring-devel "1.6.3"]
-                                 [ring/ring-mock "0.3.2"]]
-                  :plugins      [[com.jakemccrary/lein-test-refresh "0.19.0"]
-                                 [lein-doo "0.1.8"]
-                                 [lein-figwheel "0.5.15"]
-                                 [org.clojure/clojurescript "1.9.946"]]
-                  :cljsbuild
-                  {:builds
-                   {:app
-                    {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
-                     :figwheel {:on-jsload "krueger.core/mount-components"}
-                     :compiler
-                     {:main "krueger.app"
-                      :asset-path "/js/out"
-                      :output-to "target/cljsbuild/public/js/app.js"
-                      :output-dir "target/cljsbuild/public/js/out"
-                      :source-map true
-                      :optimizations :none
-                      :pretty-print true
-                      :closure-defines {"re_frame.trace.trace_enabled_QMARK_" true}
-                      :preloads [day8.re-frame-10x.preload]}}}}
+   :dev     {:prep-tasks     [["npm" "install"]]
+             :jvm-opts       ["-server" "-Dconf=dev-config.edn"]
+             :dependencies   [[binaryage/devtools "0.9.9"]
+                              [com.cemerick/piggieback "0.2.2"]
+                              [day8.re-frame/re-frame-10x "0.2.0"]
+                              [doo "0.1.8"]
+                              [figwheel-sidecar "0.5.15"]
+                              [pjstadig/humane-test-output "0.8.3"]
+                              [prone "1.5.0"]
+                              [ring/ring-devel "1.6.3"]
+                              [ring/ring-mock "0.3.2"]]
+             :plugins        [[com.jakemccrary/lein-test-refresh "0.19.0"]
+                              [lein-doo "0.1.8"]
+                              [lein-figwheel "0.5.15"]
+                              [org.clojure/clojurescript "1.9.946"]]
+             :cljsbuild
+             {:builds
+              {:app
+               {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
+                :figwheel     {:on-jsload "krueger.core/mount-components"}
+                :compiler
+                {:main            "krueger.app"
+                 :asset-path      "/js/out"
+                 :output-to       "target/cljsbuild/public/js/app.js"
+                 :output-dir      "target/cljsbuild/public/js/out"
+                 :source-map      true
+                 :optimizations   :none
+                 :pretty-print    true
+                 :closure-defines {"re_frame.trace.trace_enabled_QMARK_" true}
+                 :preloads        [day8.re-frame-10x.preload]}}}}
 
 
 
-                  :doo {:build "test"}
-                  :source-paths ["env/dev/clj"]
-                  :resource-paths ["env/dev/resources"]
-                  :repl-options {:init-ns user}
-                  :injections [(require 'pjstadig.humane-test-output)
-                               (pjstadig.humane-test-output/activate!)]}
-   :project/test {:jvm-opts ["-server" "-Dconf=test-config.edn"]
-                  :resource-paths ["env/test/resources"]
-                  :cljsbuild
-                  {:builds
-                   {:test
-                    {:source-paths ["src/cljc" "src/cljs" "test/cljs"]
-                     :compiler
-                     {:output-to "target/test.js"
-                      :main "krueger.doo-runner"
-                      :optimizations :whitespace
-                      :pretty-print true}}}}
-
-                  }
-   :profiles/dev {}
-   :profiles/test {}})
+             :doo            {:build "test"}
+             :source-paths   ["env/dev/clj"]
+             :resource-paths ["env/dev/resources"]
+             :repl-options   {:init-ns user}
+             :injections     [(require 'pjstadig.humane-test-output)
+                              (pjstadig.humane-test-output/activate!)]}
+   :test    {:prep-tasks     [["npm" "install"]]
+             :jvm-opts       ["-server" "-Dconf=test-config.edn"]
+             :resource-paths ["env/test/resources"]
+             :cljsbuild
+             {:builds
+              {:test
+               {:source-paths ["src/cljc" "src/cljs" "test/cljs"]
+                :compiler
+                {:output-to     "target/test.js"
+                 :main          "krueger.doo-runner"
+                 :optimizations :whitespace
+                 :pretty-print  true}}}}}})
