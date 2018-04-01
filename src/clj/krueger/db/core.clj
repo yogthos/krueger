@@ -21,10 +21,6 @@
   :start (conman/connect! {:jdbc-url (env :database-url)})
   :stop (conman/disconnect! *db*))
 
-(conman/bind-connection *db*
-                        "sql/attachments.sql"
-                        "sql/users.sql")
-
 (defn result-one-snake->kebab
   [this result options]
   (->> (hugsql.adapter/result-one this result options)

@@ -13,7 +13,8 @@
 (conman/bind-connection *db*
                         "sql/comments.sql"
                         "sql/posts.sql"
-                        "sql/tags.sql")
+                        "sql/tags.sql"
+                        "sql/attachments.sql")
 
 (defstate posts-per-page
   :start (or (env :posts-per-page) 10))

@@ -2,7 +2,7 @@
   (:require [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
             [krueger.layout :refer [error-page]]
-            [krueger.db.core :as db]
+            [krueger.db.posts :as db]
             [krueger.routes.services.common :refer [handler]]
             [schema.core :as s])
   (:import [java.io ByteArrayOutputStream

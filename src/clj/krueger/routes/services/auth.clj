@@ -1,7 +1,8 @@
 (ns krueger.routes.services.auth
   (:require
     [krueger.config :refer [env]]
-    [krueger.db.core :as db]
+    [krueger.db.users :as db]
+    [krueger.email :as email]
     [krueger.validation :as v]
     [krueger.routes.services.common :refer [handler]]
     [buddy.hashers :as hashers]
@@ -10,7 +11,8 @@
     [clojure.set :refer [rename-keys]]
     [ring.util.http-response :refer :all]
     [schema.core :as s])
-  (:import java.util.Date))
+  (:import java.util.Date
+           (java.util UUID)))
 
 (def User
   {:screenname                      s/Str
@@ -57,10 +59,20 @@
     (do
       (log/error "error creating user:" errors)
       (bad-request {:error "invalid user"}))
-    (db/create-user!
-      (-> user
-          (dissoc :pass-confirm)
-          (update-in [:pass] hashers/encrypt)))))
+    (if (:email-registration? env)
+      (let [token (.toString (UUID/randomUUID))]
+        (email/send-registration (:email user) token)
+        (db/create-user!
+          (-> user
+              (dissoc :pass-confirm)
+              (update-in [:pass] hashers/encrypt)
+              (assoc :active false
+                     :token token))))
+      (db/create-user!
+        (-> user
+            (dissoc :pass-confirm)
+            (update-in [:pass] hashers/encrypt)
+            (assoc :active true))))))
 
 (handler update-user! [{:keys [pass] :as user}]
   (if-let [errors (v/validate-update-user user)]

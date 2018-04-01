@@ -3,6 +3,8 @@ CREATE TABLE users
  sceenname VARCHAR(50),
  bio TEXT,
  admin BOOLEAN,
+ moderator BOOLEAN,
+ token TEXT,
  last_login TIME,
- is_active BOOLEAN,
+ active BOOLEAN,
  pass VARCHAR(100));
