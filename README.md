@@ -1,21 +1,31 @@
 # krueger
 
-generated using Luminus version "2.9.12.31"
-
-FIXME
+Federated news
 
 ## Prerequisites
 
-You will need [Leiningen][1] 2.0 or above installed.
-
-[1]: https://github.com/technomancy/leiningen
+Krueger uses PostgreSQL as the persistence layer
 
 ## Running
 
-To start a web server for the application, run:
+Create a local configuration file called `dev-config.edn`, and set the database connection there:
 
-    lein run 
+```clojure
+{:database-url "postgresql://localhost/krueger?user=<user>&password=<pass>"}
+```
+
+Next run the migrations:
+
+```
+lein run migrate
+```
+
+Start the server
+
+```
+lein run 
+```
 
 ## License
 
-Copyright © 2018 FIXME
+Copyright © 2018
