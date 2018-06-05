@@ -49,12 +49,12 @@
 
   (POST "/api/register" req
     :return auth/LoginResponse
-    :body-params [screnname :- s/Str
+    :body-params [screenname :- s/Str
                   email :- s/Str
                   pass :- s/Str]
     :summary "user registration handler"
     (auth/register!
-      {:screnname screnname
+      {:screenname screenname
        :email     email
        :pass      pass}
       req)
