@@ -74,7 +74,8 @@
         (-> user
             (dissoc :pass-confirm)
             (update-in [:pass] hashers/encrypt)
-            (assoc :active true))))))
+            (assoc :active true
+                   :token nil))))))
 
 (handler update-user! [{:keys [pass] :as user}]
   (if-let [errors (v/validate-update-user user)]
