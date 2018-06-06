@@ -18,8 +18,10 @@
   {:screenname                      s/Str
    :email                           s/Str
    :admin                           (s/maybe s/Bool)
+   :moderator                       (s/maybe s/Bool)
+   :token                           (s/maybe s/Str)
    :bio                             (s/maybe s/Str)
-   :is-active                       (s/maybe s/Bool)
+   :active                          (s/maybe s/Bool)
    :last-login                      (s/maybe Date)
    (s/optional-key :client-ip)      s/Str
    (s/optional-key :source-address) s/Str})
