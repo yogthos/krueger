@@ -1,6 +1,6 @@
 CREATE TABLE users
 (email VARCHAR(50) PRIMARY KEY,
- sceenname VARCHAR(50),
+ screenname VARCHAR(50),
  bio TEXT,
  admin BOOLEAN,
  moderator BOOLEAN,
