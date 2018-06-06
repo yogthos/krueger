@@ -55,10 +55,10 @@
     :summary "user registration handler"
     (auth/register!
       {:screenname screenname
-       :email     email
-       :pass      pass}
+       :email      email
+       :pass       pass}
       req)
-    (ok {:result :ok}))
+    (ok {:user (auth/authenticate email pass)}))
 
   (context "/admin" []
     :auth-rules admin?
