@@ -69,13 +69,16 @@
               (dissoc :pass-confirm)
               (update-in [:pass] hashers/encrypt)
               (assoc :active false
-                     :token token))))
-      (db/create-user!
-        (-> user
-            (dissoc :pass-confirm)
-            (update-in [:pass] hashers/encrypt)
-            (assoc :active true
-                   :token nil))))))
+                     :token token)))
+        :confirm-needed)
+      (do
+        (db/create-user!
+          (-> user
+              (dissoc :pass-confirm)
+              (update-in [:pass] hashers/encrypt)
+              (assoc :active true
+                     :token nil)))
+        :ok))))
 
 (handler update-user! [{:keys [pass] :as user}]
   (if-let [errors (v/validate-update-user user)]
