@@ -18,8 +18,10 @@
   {:screenname                      s/Str
    :email                           s/Str
    :admin                           (s/maybe s/Bool)
+   :moderator                       (s/maybe s/Bool)
+   :token                           (s/maybe s/Str)
    :bio                             (s/maybe s/Str)
-   :is-active                       (s/maybe s/Bool)
+   :active                          (s/maybe s/Bool)
    :last-login                      (s/maybe Date)
    (s/optional-key :client-ip)      s/Str
    (s/optional-key :source-address) s/Str})
@@ -67,12 +69,16 @@
               (dissoc :pass-confirm)
               (update-in [:pass] hashers/encrypt)
               (assoc :active false
-                     :token token))))
-      (db/create-user!
-        (-> user
-            (dissoc :pass-confirm)
-            (update-in [:pass] hashers/encrypt)
-            (assoc :active true))))))
+                     :token token)))
+        :confirm-needed)
+      (do
+        (db/create-user!
+          (-> user
+              (dissoc :pass-confirm)
+              (update-in [:pass] hashers/encrypt)
+              (assoc :active true
+                     :token nil)))
+        :ok))))
 
 (handler update-user! [{:keys [pass] :as user}]
   (if-let [errors (v/validate-update-user user)]

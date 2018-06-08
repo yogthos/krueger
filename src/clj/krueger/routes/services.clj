@@ -48,17 +48,16 @@
     (auth/login email pass req))
 
   (POST "/api/register" req
-    :return auth/LoginResponse
-    :body-params [screnname :- s/Str
+    :return common/Success
+    :body-params [screenname :- s/Str
                   email :- s/Str
                   pass :- s/Str]
     :summary "user registration handler"
-    (auth/register!
-      {:screnname screnname
-       :email     email
-       :pass      pass}
-      req)
-    (ok {:result :ok}))
+    ; REVIEW: I'm not sure this gives the correct result if `register!` 500s
+    (ok {:result (auth/register! {:screenname screenname
+                                  :email      email
+                                  :pass       pass}
+                                 req)}))
 
   (context "/admin" []
     :auth-rules admin?
