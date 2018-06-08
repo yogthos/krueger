@@ -12,3 +12,13 @@ profiles.clj
 /.env
 .nrepl-port
 /log
+/.config
+/.m2
+/.npm
+/node_modules
+/.ash_history
+/.psql_history
+*.log
+/form-init*.clj
+package-lock.json
+package.json
