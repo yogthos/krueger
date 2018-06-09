@@ -1,8 +1,9 @@
--- :name add-post! :! :n
+-- :name add-post! :<! :n
 -- :doc create a new post row
 INSERT INTO posts
   (title, author, preview, url, text, upvotes, downvotes, tags)
   VALUES (:title, :author, :preview, :url, :text, :upvotes, :downvotes, :tags)
+  RETURNING id
 
 -- :name post-by-id :? :1
 -- :doc retrieve a post using the id
