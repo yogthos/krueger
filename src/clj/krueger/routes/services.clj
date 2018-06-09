@@ -102,13 +102,10 @@
 
 
     (POST "/post" req
-      :return common/Success
+      :return posts/SubmissionResult
       :body-params [post :- posts/PostSubmission]
       :summary "new post submission"
-      (do
-        (posts-db/save-post!
-          (assoc post :author (common/user-id req)))
-        (ok {:result :ok})))
+      (ok (posts-db/save-post! (assoc post :author (common/user-id req)))))
 
     (POST "/up-vote-post" req
       :return common/Success
@@ -127,7 +124,7 @@
         (ok {:result :ok})))
 
     (POST "/add-comment" req
-      :return posts/CommentSubmissionResult
+      :return posts/SubmissionResult
       :body-params [comment :- posts/CommentSubmission]
       :summary "adds a comment to the post"
       (ok (posts-db/add-post-comment! (assoc comment :author (common/user-id req)))))
