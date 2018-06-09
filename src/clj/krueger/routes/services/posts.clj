@@ -20,7 +20,7 @@
    (s/optional-key :parent) s/Num
    :content                 String})
 
-(s/defschema CommentSubmissionResult
+(s/defschema SubmissionResult
   {:id s/Num})
 
 ;;post can either have a URL pointing to an external link or
