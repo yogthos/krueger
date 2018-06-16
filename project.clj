@@ -24,7 +24,7 @@
                  [metosin/ring-http-response "0.9.0"]
                  [mount "0.1.12"]
                  [org.clojure/clojure "1.9.0"]
-                 [org.clojure/clojurescript "1.10.238" :scope "provided"]
+                 [org.clojure/clojurescript "1.10.312" :scope "provided"]
                  [org.clojure/tools.cli "0.3.5"]
                  [org.clojure/tools.logging "0.4.0"]
                  [org.clojure/tools.reader "1.2.2"]
