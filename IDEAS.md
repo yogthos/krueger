@@ -19,3 +19,7 @@
 * markdown in comments
 * allow media attachments in comments
 
+### focus
+
+Encourage focus on local news, or small groups with shared interests.
+
