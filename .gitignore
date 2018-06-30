@@ -22,3 +22,6 @@ profiles.clj
 /form-init*.clj
 package-lock.json
 package.json
+.rebel_readline_history
+*.iml
+

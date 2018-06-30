@@ -40,6 +40,7 @@
                  [ring/ring-defaults "0.3.2"]
                  [secretary "1.2.3"]
                  [selmer "1.11.8"]
+                 [metosin/reitit "0.1.3"]
                  [cljsjs/semantic-ui-react "0.81.1-0"]]
 
   :min-lein-version "2.0.0"
@@ -91,7 +92,7 @@
    :dev     {:jvm-opts       ["-server" "-Dconf=dev-config.edn"]
              :dependencies   [[binaryage/devtools "0.9.10"]
                               [com.cemerick/piggieback "0.2.2"]
-                              [day8.re-frame/re-frame-10x "0.3.3"]
+                              [day8.re-frame/re-frame-10x "0.3.3-react16"]
                               [doo "0.1.10"]
                               [figwheel-sidecar "0.5.16"]
                               [pjstadig/humane-test-output "0.8.3"]

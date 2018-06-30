@@ -40,25 +40,6 @@
                            :title       "Sample API"
                            :description "Sample Services"}}}}
 
-  (POST "/api/login" req
-    :return auth/LoginResponse
-    :body-params [email :- s/Str
-                  pass :- s/Str]
-    :summary "user login handler"
-    (auth/login email pass req))
-
-  (POST "/api/register" req
-    :return common/Success
-    :body-params [screenname :- s/Str
-                  email :- s/Str
-                  pass :- s/Str]
-    :summary "user registration handler"
-    ; REVIEW: I'm not sure this gives the correct result if `register!` 500s
-    (ok {:result (auth/register! {:screenname screenname
-                                  :email      email
-                                  :pass       pass}
-                                 req)}))
-
   (context "/admin" []
     :auth-rules admin?
     :tags ["admin"]
@@ -80,17 +61,31 @@
                           :admin        admin
                           :is-active    is-active})))
   (context "/api" []
-    :auth-rules authenticated?
-    :tags ["private"]
+    :tags ["public"]
 
-    (POST "/logout" []
-      :return auth/LogoutResponse
-      :summary "remove the user from the session"
-      (auth/logout))
+    (POST "/login" req
+      :return auth/LoginResponse
+      :body-params [email :- s/Str
+                    pass :- s/Str]
+      :summary "user login handler"
+      (auth/login email pass req))
+
+    (POST "/register" req
+      :return common/Success
+      :body-params [screenname :- s/Str
+                    email :- s/Str
+                    pass :- s/Str]
+      :summary "user registration handler"
+      ; REVIEW: I'm not sure this gives the correct result if `register!` 500s
+      (ok {:result (auth/register! {:screenname screenname
+                                    :email      email
+                                    :pass       pass}
+                                   req)}))
 
     (GET "/page" []
       :return posts/PostPreviews
-      :query-params [category :- String page :- Long]
+      :query-params [category :- String
+                     page :- Long]
       :summary "return posts with the given page offset"
       (ok (posts-db/get-post-previews category page)))
 
@@ -100,44 +95,6 @@
       :summary "return post with the given id"
       (ok (posts-db/get-post-by-slug id)))
 
-
-    (POST "/post" req
-      :return posts/SubmissionResult
-      :body-params [post :- posts/PostSubmission]
-      :summary "new post submission"
-      (ok (posts-db/save-post! (assoc post :author (common/user-id req)))))
-
-    (POST "/up-vote-post" req
-      :return common/Success
-      :body-params [id :- String]
-      :summary "up-vote the post with the given id"
-      (do
-        (posts-db/upvote-post! (common/user-id req) id)
-        (ok {:result :ok})))
-
-    (POST "/down-vote-post" req
-      :return common/Success
-      :body-params [id :- String]
-      :summary "down-vote the post with the given id"
-      (do
-        (posts-db/downvote-post! (common/user-id req) id)
-        (ok {:result :ok})))
-
-    (POST "/add-comment" req
-      :return posts/SubmissionResult
-      :body-params [comment :- posts/CommentSubmission]
-      :summary "adds a comment to the post"
-      (ok (posts-db/add-post-comment! (assoc comment :author (common/user-id req)))))
-
-    ;;attachments
-    (POST "/media" []
-      :multipart-params [file :- TempFileUpload]
-      :middleware [wrap-multipart-params]
-      :current-user user
-      :summary "handles media upload"
-      :return attachments/AttachmentResult
-      (attachments/upload-media! {:user-id (:user-id user)} file))
-
     (GET "/media/:id" []
       :summary "load media attachment from the database matching the filename"
       :path-params [id :- s/Str]
@@ -145,10 +102,56 @@
       (attachments/load-file-data {:user-id (:user-id user)
                                    :name    id}))
 
-    (DELETE "/media/:name" []
-      :summary "delete media from the database"
-      :path-params [name :- s/Str]
-      :current-user user
-      :return attachments/AttachmentResult
-      (attachments/remove-media! {:user-id (:user-id user)
-                                  :name    name}))))
+    (context "/restricted" []
+      :auth-rules authenticated?
+      :tags ["restricted"]
+
+      (POST "/logout" []
+        :return auth/LogoutResponse
+        :summary "remove the user from the session"
+        (auth/logout))
+
+      (POST "/post" req
+        :return posts/SubmissionResult
+        :body-params [post :- posts/PostSubmission]
+        :summary "new post submission"
+        (ok (posts-db/save-post! (assoc post :author (common/user-id req)))))
+
+      (POST "/up-vote-post" req
+        :return common/Success
+        :body-params [id :- String]
+        :summary "up-vote the post with the given id"
+        (do
+          (posts-db/upvote-post! (common/user-id req) id)
+          (ok {:result :ok})))
+
+      (POST "/down-vote-post" req
+        :return common/Success
+        :body-params [id :- String]
+        :summary "down-vote the post with the given id"
+        (do
+          (posts-db/downvote-post! (common/user-id req) id)
+          (ok {:result :ok})))
+
+      (POST "/add-comment" req
+        :return posts/SubmissionResult
+        :body-params [comment :- posts/CommentSubmission]
+        :summary "adds a comment to the post"
+        (ok (posts-db/add-post-comment! (assoc comment :author (common/user-id req)))))
+
+      ;;attachments
+      (POST "/media" []
+        :multipart-params [file :- TempFileUpload]
+        :middleware [wrap-multipart-params]
+        :current-user user
+        :summary "handles media upload"
+        :return attachments/AttachmentResult
+        (attachments/upload-media! {:user-id (:user-id user)} file))
+
+      (DELETE "/media/:name" []
+        :summary "delete media from the database"
+        :path-params [name :- s/Str]
+        :current-user user
+        :return attachments/AttachmentResult
+        (attachments/remove-media! {:user-id (:user-id user)
+                                    :name    name})))))

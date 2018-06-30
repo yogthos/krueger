@@ -3,7 +3,7 @@
             [cheshire.generate :as cheshire]
             [cognitect.transit :as transit]
             [clojure.tools.logging :as log]
-            [krueger.layout :refer [*app-context* error-page]]
+            [krueger.layout :refer [error-page]]
             [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
             [ring.middleware.webjars :refer [wrap-webjars]]
             [muuntaja.core :as muuntaja]
@@ -18,23 +18,7 @@
             [buddy.auth.accessrules :refer [restrict]]
             [buddy.auth :refer [authenticated?]]
             [buddy.auth.backends.session :refer [session-backend]])
-  (:import [javax.servlet ServletContext]
-           [org.joda.time ReadableInstant]))
-
-(defn wrap-context [handler]
-  (fn [request]
-    (binding [*app-context*
-              (if-let [context (:servlet-context request)]
-                ;; If we're not inside a servlet environment
-                ;; (for example when using mock requests), then
-                ;; .getContextPath might not exist
-                (try (.getContextPath ^ServletContext context)
-                     (catch IllegalArgumentException _ context))
-                ;; if the context is not specified in the request
-                ;; we check if one has been specified in the environment
-                ;; instead
-                (:app-context env))]
-      (handler request))))
+  (:import [org.joda.time ReadableInstant]))
 
 (defn wrap-internal-error [handler]
   (fn [req]
@@ -113,5 +97,4 @@
         (-> site-defaults
             (assoc-in [:security :anti-forgery] false)
             (dissoc :session)))
-      wrap-context
       wrap-internal-error))

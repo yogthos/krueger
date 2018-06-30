@@ -6,7 +6,7 @@
       <title>Welcome to krueger</title>
   </head>
   <body>
-    
+
     <div id="app">
       <div class="container-fluid">
         <div class="card-deck">
@@ -33,14 +33,12 @@
     {% style "/assets/font-awesome/web-fonts-with-css/css/fontawesome-all.min.css" %}
     {% style "/css/screen.css" %}
 
-    {% script "/assets/jquery/jquery.min.js" %}
+    <!-- {% script "/assets/jquery/jquery.min.js" %} -->
     {% script "/assets/font-awesome/svg-with-js/js/fontawesome.min.js" %}
-    {% script "/assets/tether/dist/js/tether.min.js" %}
-    {% script "/assets/bootstrap/js/bootstrap.min.js" %}
 
     <script type="text/javascript">
-        var context = "{{servlet-context}}";
         var csrfToken = "{{csrf-token}}";
+        var user = {{user|json|safe}};
     </script>
     {% script "/js/app.js" %}
   </body>
