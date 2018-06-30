@@ -4,10 +4,9 @@
             [secretary.core :as secretary]
             [goog.events :as events]
             [goog.history.EventType :as HistoryEventType]
-            [markdown.core :refer [md->html]]
             [ajax.core :refer [GET POST]]
             [krueger.ajax :refer [load-interceptors!]]
-            [krueger.events])
+            [krueger.effects])
   (:import goog.History))
 
 (defn nav-link [uri title page]
@@ -39,10 +38,7 @@
   [:div.container
    [:div.row>div.col-sm-12
     [:h2.alert.alert-info "Tip: try pressing CTRL+H to open re-frame tracing menu"]]
-   (when-let [docs @(rf/subscribe [:docs])]
-     [:div.row>div.col-sm-12
-      [:div {:dangerouslySetInnerHTML
-             {:__html (md->html docs)}}]])])
+   ])
 
 (def pages
   {:home #'home-page

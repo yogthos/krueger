@@ -14,14 +14,19 @@
 (defn group-comments [comments]
   (link-comments (group-by :parent comments)))
 
+(rf/reg-event-fx
+  ::submit-comment
+  (fn [_ {:keys [parent-id] :as comment}])
+  )
+
 (defn comment-editor [& [parent-id]]
-  (when-let [id (:id @(rf/subscribe [:identity]))]
+  (when-let [user-id (:id @(rf/subscribe [:identity]))]
     (rf/dispatch [:comment/parent parent-id])
     [:div
-     [:p "commenting as " [:a {:href (str "/" id)} id]]
+     [:p "commenting as " [:a {:href (str "/" user-id)} user-id]]
      [widgets/input :textarea {:rows 5} :comment nil [:comment]]
      [:button.btn.btn-primary
-      {:on-click #(rf/dispatch [:submit-comment!])}
+      {:on-click #(rf/dispatch [::submit-comment parent-id user-id])}
       "save"]]))
 
 (declare comment-component)
@@ -29,7 +34,7 @@
 ;;TODO format and print the timestamp
 ;;TODO format comments using markdown
 (defn comment-component [{:keys [id author timestamp content upvotes downvotes children]}]
-  (r/with-let [expanded?   (atom true)
+  (r/with-let [expanded? (atom true)
                show-reply? (atom false)]
     [:div
      [:div.comment

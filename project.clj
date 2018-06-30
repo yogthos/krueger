@@ -7,37 +7,40 @@
   :dependencies [[alpha-id "0.2"]
                  [buddy "2.0.0"]
                  [camel-snake-kebab "0.4.0"]
-                 [clj-time "0.14.2"]
+                 [clj-time "0.14.4"]
                  [cljs-ajax "0.7.3"]
-                 [compojure "1.6.0"]
+                 [compojure "1.6.1"]
+                 [com.cognitect/transit-clj "0.8.309"]
+                 [com.cognitect/transit-cljs "0.8.256"]
                  [com.draines/postal "2.0.2"]
-                 [conman "0.7.7"]
+                 [conman "0.8.1"]
                  [cprop "0.1.11"]
-                 [funcool/struct "1.2.0"]
+                 [funcool/struct "1.3.0"]
+                 [kee-frame "0.2.4"]
                  [luminus-immutant "0.2.4"]
                  [luminus-migrations "0.5.0"]
                  [luminus-nrepl "0.1.4"]
                  [luminus/ring-ttl-session "0.3.2"]
-                 [markdown-clj "1.0.2"]
                  [metosin/compojure-api "1.1.12"]
                  [metosin/muuntaja "0.5.0"]
                  [metosin/ring-http-response "0.9.0"]
                  [mount "0.1.12"]
                  [org.clojure/clojure "1.9.0"]
-                 [org.clojure/clojurescript "1.10.312" :scope "provided"]
-                 [org.clojure/tools.cli "0.3.5"]
-                 [org.clojure/tools.logging "0.4.0"]
+                 [org.clojure/clojurescript "1.10.339" :scope "provided"]
+                 [org.clojure/tools.cli "0.3.7"]
+                 [org.clojure/tools.logging "0.4.1"]
                  [org.clojure/tools.reader "1.2.2"]
                  [org.postgresql/postgresql "42.2.2"]
-                 [org.webjars/font-awesome "5.0.8"]
-                 [prismatic/schema "1.1.8"]
+                 [org.webjars/font-awesome "5.1.0"]
+                 [prismatic/schema "1.1.9"]
                  [re-frame "0.10.5"]
-                 [reagent "0.7.0"]
+                 [reagent "0.8.1"]
                  [ring-webjars "0.2.0"]
                  [ring/ring-core "1.6.3"]
-                 [ring/ring-defaults "0.3.1"]
+                 [ring/ring-defaults "0.3.2"]
                  [secretary "1.2.3"]
-                 [selmer "1.11.7"]]
+                 [selmer "1.11.8"]
+                 [cljsjs/semantic-ui-react "0.81.1-0"]]
 
   :min-lein-version "2.0.0"
 
@@ -86,18 +89,18 @@
              :resource-paths ["env/prod/resources"]}
 
    :dev     {:jvm-opts       ["-server" "-Dconf=dev-config.edn"]
-             :dependencies   [[binaryage/devtools "0.9.9"]
+             :dependencies   [[binaryage/devtools "0.9.10"]
                               [com.cemerick/piggieback "0.2.2"]
-                              [day8.re-frame/re-frame-10x "0.3.0"]
+                              [day8.re-frame/re-frame-10x "0.3.3"]
                               [doo "0.1.10"]
-                              [figwheel-sidecar "0.5.15"]
+                              [figwheel-sidecar "0.5.16"]
                               [pjstadig/humane-test-output "0.8.3"]
-                              [prone "1.5.0"]
+                              [prone "1.6.0"]
                               [ring/ring-devel "1.6.3"]
                               [ring/ring-mock "0.3.2"]]
              :plugins        [[com.jakemccrary/lein-test-refresh "0.19.0"]
                               [lein-doo "0.1.10"]
-                              [lein-figwheel "0.5.15"]]
+                              [lein-figwheel "0.5.16"]]
              :cljsbuild
              {:builds
               {:app
@@ -112,11 +115,7 @@
                  :optimizations   :none
                  :pretty-print    true
                  :closure-defines {"re_frame.trace.trace_enabled_QMARK_" true}
-                 :preloads        [day8.re-frame-10x.preload]
-                 :install-deps true
-                 :npm-deps {:react "15.6.1"
-                            :react-dom "15.6.1"
-                            :semantic-ui-react "0.79.0"}}}}}
+                 :preloads        [day8.re-frame-10x.preload]}}}}
 
 
 
