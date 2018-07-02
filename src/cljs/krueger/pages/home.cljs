@@ -3,6 +3,11 @@
     [re-frame.core :as rf]
     [kee-frame.core :as kf]))
 
+(rf/reg-sub
+  ::posts
+  (fn [db _]
+    (::posts db)))
+
 (defn home-page []
   [:div.container
    [:div.row>div.col-sm-12
@@ -12,12 +17,12 @@
 (kf/reg-chain
   ::fetch-posts
   (fn [_ _]
-    {:http {:method      :get
+    #_{:http {:method      :get
             :url         "/api/page"
             :params      {:category :all
                           :offset   0}
             :error-event [:common/set-error]}})
-  (fn [{:keys [db]} [_ posts]]
+  #_(fn [{:keys [db]} [_ posts]]
     {:db (assoc db ::posts posts)}))
 
 (kf/reg-controller

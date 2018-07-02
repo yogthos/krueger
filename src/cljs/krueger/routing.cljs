@@ -39,7 +39,7 @@
 (rf/reg-event-db
   :nav/go
   (fn [db [_ route]]
-    (assoc db :route route)))
+    (assoc db ::route route)))
 
 (rf/reg-event-db
   :navigate-by-route-name
@@ -48,12 +48,12 @@
       #_(println "navigating to:" route-name route)
       ;;TODO hack, need to fix to work properly
       (.assign js/location (:path route))
-      (assoc db :route route))))
+      (assoc db ::route route))))
 
 (rf/reg-sub
   :nav/route
   (fn [db _]
-    (-> db :route)))
+    (-> db ::route)))
 
 (rf/reg-sub
   :nav/page

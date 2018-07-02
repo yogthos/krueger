@@ -99,13 +99,13 @@
 
    ;; private
    ;; todo add context, auth
-   ["/logout"
+   ["/restricted/logout"
     {:post
      {:summary   "remove the user from the session"
       :responses {200 {:body auth/LogoutResponse}}
       :handler   (fn [_]
                    (auth/logout))}}]
-   ["/post"
+   ["/restricted/post"
     {:post
      {:summary    "new post submission"
       :parameters {:body {:post posts/PostSubmission}}
@@ -113,7 +113,7 @@
       :handler    (fn [{{{:keys [post]} :body} :parameters :as req}]
                     (ok (posts-db/save-post! (assoc post :author (common/user-id req)))))}}]
 
-   ["/up-vote-post"
+   ["/restricted/up-vote-post"
     {:post
      {:summary    "up-vote the post with the given id"
       :parameters {:body {:id s/Str}}
@@ -123,7 +123,7 @@
                       (posts-db/upvote-post! (common/user-id req) id)
                       (ok {:result :ok})))}}]
 
-   ["/down-vote-post"
+   ["/restricted/down-vote-post"
     {:post
      {:summary    "down-vote the post with the given id"
       :parameters {:body {:id s/Str}}
@@ -133,7 +133,7 @@
                       (posts-db/downvote-post! (common/user-id req) id)
                       (ok {:result :ok})))}}]
 
-   ["/comment"
+   ["/restricted/comment"
     {:post
      {:summary    "adds a comment to the post"
       :parameters {:body {:comment posts/CommentSubmission}}
@@ -141,7 +141,7 @@
       :handler    (fn [{{{:keys [comment]} :body} :parameters :as req}]
                     (ok (posts-db/add-post-comment! (assoc comment :author (common/user-id req)))))}}]
 
-   ["/media"
+   ["/restricted/media"
     {:post
      {:summary    "add a media attachment"
       :parameters {:body {:file s/Any #_TempFileUpload}}
@@ -150,7 +150,7 @@
                         {:keys [identity]}     :session}]
                     (attachments/upload-media! {:user-id (:user-id identity)} file))}}]
 
-   ["/media/:name"
+   ["/restricted/media/:name"
     {:post
      {:summary    "delete media from the database"
       :parameters {:path {:name s/Str}}

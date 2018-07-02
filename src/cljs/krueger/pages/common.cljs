@@ -4,7 +4,7 @@
 
 (defn nav-link [uri title page]
   [:li.nav-item
-   {:class (when (= page @(rf/subscribe [:page])) "active")}
+   #_{:class (when (= page @(rf/subscribe [:page])) "active")}
    [:a.nav-link {:href uri} title]])
 
 (defn navbar []

@@ -1,6 +1,5 @@
 (ns krueger.core
   (:require [reagent.core :as r]
-            [re-frame.core :as rf]
             [kee-frame.core :as kf]
             [ajax.core :refer [GET POST]]
             [krueger.ajax :refer [load-interceptors!]]
@@ -14,7 +13,8 @@
   [:div
    [navbar]
    [common/error-modal]
-   [kf/switch-route (fn [route] (get-in route [:data :name]))
+   [:p "hello"]
+   #_[kf/switch-route (fn [route] (get-in route [:data :name]))
     :home home-page
     nil [:div>h1 "404"]]])
 
