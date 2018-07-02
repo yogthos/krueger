@@ -41,6 +41,7 @@
                  [secretary "1.2.3"]
                  [selmer "1.11.8"]
                  [metosin/reitit "0.1.3"]
+                 [metosin/schema-tools "0.10.3"]
                  [cljsjs/semantic-ui-react "0.81.1-0"]]
 
   :min-lein-version "2.0.0"
