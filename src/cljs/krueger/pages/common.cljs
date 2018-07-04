@@ -1,22 +1,16 @@
 (ns krueger.pages.common
   (:require
+    [cljsjs.semantic-ui-react :as ui]
+    [reagent.core :as r]
     [re-frame.core :as rf]))
 
-(defn nav-link [uri title page]
-  [:li.nav-item
-   #_{:class (when (= page @(rf/subscribe [:page])) "active")}
-   [:a.nav-link {:href uri} title]])
+(defn nav-link [route title]
+  [:> ui/MenuItem
+   {:name title
+    :active (= @(rf/subscribe [:nav/page]) route)
+    :onClick #(rf/dispatch [:navigate-by-route-name route])}])
 
 (defn navbar []
-  [:nav.navbar.navbar-dark.bg-primary.navbar-expand-md
-   {:role "navigation"}
-   [:button.navbar-toggler.hidden-sm-up
-    {:type "button"
-     :data-toggle "collapse"
-     :data-target "#collapsing-navbar"}
-    [:span.navbar-toggler-icon]]
-   [:a.navbar-brand {:href "#/"} "krueger"]
-   [:div#collapsing-navbar.collapse.navbar-collapse
-    [:ul.nav.navbar-nav.mr-auto
-     [nav-link "#/" "Home" :home]
-     [nav-link "#/about" "About" :about]]]])
+  [:> ui/Menu
+   [nav-link :home "Home"]
+   [nav-link :threads "Threads"]])

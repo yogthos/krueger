@@ -9,7 +9,11 @@
   (:import goog.History))
 
 (def routes
-  [["/" :home]])
+  [["/" :home]
+   ["/messages" :messages]
+   ["/submit" :submit]
+   ["/profile" :profile]
+   ["/threads" :threads]])
 
 (def router (reitit/router routes))
 
@@ -47,7 +51,7 @@
     (let [route (reitit/match-by-name router route-name)]
       #_(println "navigating to:" route-name route)
       ;;TODO hack, need to fix to work properly
-      (.assign js/location (:path route))
+      #_(.assign js/location (:path route))
       (assoc db ::route route))))
 
 (rf/reg-sub
