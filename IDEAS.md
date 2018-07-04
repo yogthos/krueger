@@ -9,6 +9,8 @@
 * users could subscribe to a combination of tags and other users
 * users should be able to create lists from tags/users for customized feeds
 * ability to block users
+* ability to subscribe to RSS feeds via Krueger, possibly use RSS to share feeds between Krueger instances?
+* allow federated user accounts, users from one instance could comment on another
 
 ### posts and comments
 
