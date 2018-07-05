@@ -3,6 +3,7 @@
             [kee-frame.core :as kf]
             [ajax.core :refer [GET POST]]
             [krueger.ajax :refer [load-interceptors!]]
+            [krueger.auth]
             [krueger.common :as common]
             [krueger.effects :as effects]
             [krueger.pages.common :refer [navbar]]
@@ -13,8 +14,7 @@
   [:div
    [navbar]
    [common/error-modal]
-   [:p "hello"]
-   #_[kf/switch-route (fn [route] (get-in route [:data :name]))
+   [kf/switch-route (fn [route] (get-in route [:data :name]))
     :home home-page
     nil [:div>h1 "404"]]])
 
@@ -25,7 +25,7 @@
   (kf/start! {:debug?         true
               :router         (routing/->ReititRouter routing/router)
               :chain-links    effects/chain-links
-              :initial-db     {:user (js->clj js/user)}
+              :initial-db     {:auth/user (js->clj js/user)}
               :root-component [root-component]})
   (load-interceptors!)
   (routing/hook-browser-navigation!))

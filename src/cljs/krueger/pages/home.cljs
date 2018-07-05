@@ -1,5 +1,6 @@
 (ns krueger.pages.home
   (:require
+    [cljsjs.semantic-ui-react :as ui]
     [re-frame.core :as rf]
     [kee-frame.core :as kf]))
 
@@ -9,10 +10,13 @@
     (::posts db)))
 
 (defn home-page []
-  [:div.container
-   [:div.row>div.col-sm-12
-    [:h2.alert.alert-info "Tip: try pressing CTRL+H to open re-frame tracing menu"]]
-   [:p (str @(rf/subscribe [::posts]))]])
+  [:div
+   (into [:> ui/List]
+         [[:> ui/List.Item
+           [:> ui/Image {:src "/img/warning_clojure.png"}]
+           [:> ui/List.Content
+            [:> ui/List.Header {:as "header"} [:a {:href "reddit.com"} "Story Title"]]
+            [:> ui/List.Description "description"]]]])])
 
 (kf/reg-chain
   ::fetch-posts
