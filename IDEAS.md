@@ -21,6 +21,11 @@
 * markdown in comments
 * allow media attachments in comments
 
+### post propagation
+
+Use Twitter style model where users reshare posts instead of upvoting. This will make the post
+show up in the timeline of the user resharing the post and become visible to their followers.
+
 ### focus
 
 Encourage focus on local news, or small groups with shared interests.
