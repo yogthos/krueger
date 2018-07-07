@@ -8,6 +8,7 @@
             [krueger.effects :as effects]
             [krueger.pages.common :refer [navbar]]
             [krueger.pages.home :refer [home-page]]
+            [krueger.pages.post :refer [post-page]]
             [krueger.routing :as routing]))
 
 (defn root-component []
@@ -16,6 +17,7 @@
    [common/error-modal]
    [kf/switch-route (fn [route] (get-in route [:data :name]))
     :home home-page
+    :post post-page
     nil [:div>h1 "404"]]])
 
 (defn mount-components []

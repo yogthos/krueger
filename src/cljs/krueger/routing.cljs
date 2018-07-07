@@ -11,8 +11,9 @@
 (def routes
   [["/" :home]
    ["/messages" :messages]
-   ["/submit" :submit]
+   ["/post/:id" :post]
    ["/profile" :profile]
+   ["/submit" :submit]
    ["/threads" :threads]])
 
 (def router (reitit/router routes))
