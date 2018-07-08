@@ -5,7 +5,7 @@
 (rf/reg-sub
   :auth/user
   (fn [db _]
-    (:user db)))
+    (:auth/user db)))
 
 (rf/reg-event-fx
   :auth/login

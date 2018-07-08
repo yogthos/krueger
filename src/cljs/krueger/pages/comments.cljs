@@ -1,24 +1,24 @@
-(ns krueger.pages.profile
+(ns krueger.pages.comments
   (:require
     [cljsjs.semantic-ui-react :as ui]
     [re-frame.core :as rf]
     [kee-frame.core :as kf]))
 
 (rf/reg-sub
-  ::profile
+  ::comments
   (fn [db _]
-    (::profile db)))
+    (::comments db)))
 
-(defn profile-page []
+(defn comments-page []
   [:> ui/Container
    {:fluid true}
-   [:p "profile"]
-   [:p @(rf/subscribe [::profile])]])
+   [:p "a comment"]
+   [:p @(rf/subscribe [::comments])]])
 
 (kf/reg-chain
-  ::fetch-profile
+  ::fetch-comments
   (fn [{db :db} _]
-    {:db (assoc db ::messages [{:id 1 :text "some message"}])}
+    {:db (assoc db ::messages [{:id 1 :text "some comment"}])}
     #_{:http {:method      :get
               :url         "/api/page"
               :params      {:category :all
@@ -28,9 +28,9 @@
       {:db (assoc db ::posts posts)}))
 
 (kf/reg-controller
-  ::profile-controller
+  ::comments-controller
   {:params (fn [route] (-> route :path-params))
-   :start  (fn [_] [::fetch-profile])})
+   :start  (fn [_] [::fetch-comments])})
 
 
 

@@ -68,6 +68,6 @@
       {:db (assoc db ::posts posts)}))
 
 (kf/reg-controller
-  ::post
+  ::post-controller
   {:params (fn [route] (-> route :path-params))
    :start  (fn [_ post-id] [::fetch-post post-id])})

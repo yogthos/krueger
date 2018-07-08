@@ -112,7 +112,7 @@
                   {:builds
                    {:app
                     {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
-                     :figwheel {:on-jsload "krueger.core/mount-components"}
+                     :figwheel {:on-jsload "krueger.app/mount-components"}
                      :compiler
                                    {:main "krueger.app"
                                     :asset-path "/js/out"

@@ -7,8 +7,11 @@
             [krueger.common :as common]
             [krueger.effects :as effects]
             [krueger.pages.common :refer [navbar]]
+            [krueger.pages.comments :refer [comments-page]]
             [krueger.pages.home :refer [home-page]]
+            [krueger.pages.messages :refer [messages-page]]
             [krueger.pages.post :refer [post-page]]
+            [krueger.pages.profile :refer [profile-page]]
             [krueger.routing :as routing]))
 
 (defn root-component []
@@ -17,17 +20,17 @@
    [common/error-modal]
    [kf/switch-route (fn [route] (get-in route [:data :name]))
     :home home-page
+    :comments comments-page
+    :messages messages-page
     :post post-page
+    :profile profile-page
     nil [:div>h1 "404"]]])
-
-(defn mount-components []
-  (r/render [#'root-component] (.getElementById js/document "app")))
 
 (defn init! []
   (kf/start! {:debug?         true
               :router         (routing/->ReititRouter routing/router)
               :chain-links    effects/chain-links
-              :initial-db     {:auth/user (js->clj js/user)}
+              :initial-db     {:auth/user #_{:id 1 :username "foo"} (js->clj js/user)}
               :root-component [root-component]})
   (load-interceptors!)
   (routing/hook-browser-navigation!))

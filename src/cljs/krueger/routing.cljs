@@ -10,11 +10,11 @@
 
 (def routes
   [["/" :home]
+   ["/comments" :comments]
    ["/messages" :messages]
    ["/post/:id" :post]
    ["/profile" :profile]
-   ["/submit" :submit]
-   ["/threads" :threads]])
+   ["/submit" :submit]])
 
 (def router (reitit/router routes))
 
@@ -50,9 +50,7 @@
   :navigate-by-route-name
   (fn [db [_ route-name]]
     (let [route (reitit/match-by-name router route-name)]
-      #_(println "navigating to:" route-name route)
-      ;;TODO hack, need to fix to work properly
-      #_(.assign js/location (:path route))
+      (.pushState (.-history js/window) route (-> route :data :name name) (:path route))
       (assoc db ::route route))))
 
 (rf/reg-sub

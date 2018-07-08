@@ -42,6 +42,6 @@
       {:db (assoc db ::posts posts)}))
 
 (kf/reg-controller
-  ::home
+  ::home-controller
   {:params (fn [route] (-> route :path-params))
    :start  [::fetch-posts]})
