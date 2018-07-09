@@ -46,12 +46,11 @@
   (fn [db [_ route]]
     (assoc db ::route route)))
 
-(rf/reg-event-db
+(rf/reg-event-fx
   :navigate-by-route-name
-  (fn [db [_ route-name]]
+  (fn [_ [_ route-name]]
     (let [route (reitit/match-by-name router route-name)]
-      (.pushState (.-history js/window) route (-> route :data :name name) (:path route))
-      (assoc db ::route route))))
+      {:navigate-to [(-> route :data :name) (:path-params route)]})))
 
 (rf/reg-sub
   :nav/route
