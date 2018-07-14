@@ -9,20 +9,29 @@
   (:import goog.History))
 
 (def routes
-  [["/" :home]])
+  [["/" :home]
+   ["/comments" :comments]
+   ["/messages" :messages]
+   ["/post/:id" :post]
+   ["/profile" :profile]
+   ["/submit" :submit]])
 
 (def router (reitit/router routes))
 
 
 (defrecord ReititRouter [routes]
   api/Router
-  (data->url [_ [route-name path-params]] (str (:path (reitit/match-by-name routes route-name path-params))
-                                               (when-some [q (:query-string path-params)] (str "?" q))
-                                               (when-some [h (:hash path-params)] (str "#" h))))
-  (url->data [_ url] (let [[path+query fragment] (string/split url #"#" 2)
-                           [path query] (string/split path+query #"\?" 2)]
-                       (some-> (reitit/match-by-path routes path)
-                               (assoc :query-string query :hash fragment)))))
+
+  (data->url [_ [route-name path-params]]
+    (str (:path (reitit/match-by-name routes route-name path-params))
+         (when-some [q (:query-string path-params)] (str "?" q))
+         (when-some [h (:hash path-params)] (str "#" h))))
+
+  (url->data [_ url]
+    (let [[path+query fragment] (string/split url #"#" 2)
+          [path query] (string/split path+query #"\?" 2)]
+      (some-> (reitit/match-by-path routes path)
+              (assoc :query-string query :hash fragment)))))
 
 (defn match-route [uri]
   (->> (or (not-empty (string/replace uri #"^.*#" "")) "/")
@@ -39,21 +48,18 @@
 (rf/reg-event-db
   :nav/go
   (fn [db [_ route]]
-    (assoc db :route route)))
+    (assoc db ::route route)))
 
-(rf/reg-event-db
+(rf/reg-event-fx
   :navigate-by-route-name
-  (fn [db [_ route-name]]
+  (fn [_ [_ route-name]]
     (let [route (reitit/match-by-name router route-name)]
-      #_(println "navigating to:" route-name route)
-      ;;TODO hack, need to fix to work properly
-      (.assign js/location (:path route))
-      (assoc db :route route))))
+      {:navigate-to [(-> route :data :name) (:path-params route)]})))
 
 (rf/reg-sub
   :nav/route
   (fn [db _]
-    (-> db :route)))
+    (-> db ::route)))
 
 (rf/reg-sub
   :nav/page

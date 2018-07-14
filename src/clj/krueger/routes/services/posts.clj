@@ -1,7 +1,7 @@
 (ns krueger.routes.services.posts
   (:require
     [schema.core :as s])
-  (:import org.joda.time.DateTime))
+  (:import java.util.Date))
 
 (s/defschema Tag
   {:id s/Num :label String})
@@ -11,7 +11,7 @@
    (s/optional-key :parent) (s/maybe s/Num)
    :author                  String
    :content                 String
-   :timestamp               DateTime
+   :timestamp               Date
    :upvotes                 s/Num
    :downvotes               s/Num})
 
@@ -34,7 +34,7 @@
                    (s/optional-key :text)    (s/maybe String)
                    :upvotes                  s/Num
                    :downvotes                s/Num
-                   :timestamp                DateTime
+                   :timestamp                Date
                    :comments                 [Comment]})
 
 (s/defschema PostSubmission
@@ -50,7 +50,7 @@
    (s/optional-key :preview) (s/maybe String)
    :title                    String
    (s/optional-key :url)     (s/maybe String)
-   :timestamp                DateTime
+   :timestamp                Date
    :upvotes                  s/Num
    :downvotes                s/Num})
 

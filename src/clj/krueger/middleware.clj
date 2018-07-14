@@ -5,7 +5,6 @@
             [clojure.tools.logging :as log]
             [krueger.layout :refer [error-page]]
             [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
-            [ring.middleware.webjars :refer [wrap-webjars]]
             [muuntaja.core :as muuntaja]
             [muuntaja.format.json :refer [json-format]]
             [muuntaja.format.transit :as transit-format]
@@ -13,12 +12,8 @@
             [krueger.config :refer [env]]
             [ring.middleware.flash :refer [wrap-flash]]
             [immutant.web.middleware :refer [wrap-session]]
-            [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
-            [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
-            [buddy.auth.accessrules :refer [restrict]]
-            [buddy.auth :refer [authenticated?]]
-            [buddy.auth.backends.session :refer [session-backend]])
-  (:import [org.joda.time ReadableInstant]))
+            [ring.middleware.defaults :refer [site-defaults wrap-defaults]])
+  (:import java.time.ZonedDateTime))
 
 (defn wrap-internal-error [handler]
   (fn [req]
@@ -38,19 +33,20 @@
        {:status 403
         :title "Invalid anti-forgery token"})}))
 
-(def joda-time-writer
+#_(def time-writer
   (transit/write-handler
     (constantly "m")
-    (fn [v] (-> ^ReadableInstant v .getMillis))
-    (fn [v] (-> ^ReadableInstant v .getMillis .toString))))
+    (fn [v] (.getTime v) #_(-> ^ReadableInstant v .getMillis))
+    (fn [v] (.toString (.getTime v)) #_(-> ^ReadableInstant v .getMillis .toString))))
 
-(cheshire/add-encoder
-  org.joda.time.DateTime
+#_(cheshire/add-encoder
+    java.util.Date
   (fn [c jsonGenerator]
-    (.writeString jsonGenerator (-> ^ReadableInstant c .getMillis .toString))))
+    (.writeString jsonGenerator (.toString (.geTime c)))))
 
 (def restful-format-options
-  (update
+  muuntaja/default-options
+  #_(update
     muuntaja/default-options
     :formats
     merge
@@ -63,7 +59,7 @@
                    :json
                    (merge
                      %
-                     {:handlers {org.joda.time.DateTime joda-time-writer}}))]}}))
+                     {:handlers {java.util.Date time-writer}}))]}}))
 
 (defn wrap-formats [handler]
   (let [wrapped (-> handler wrap-params (wrap-format restful-format-options))]
@@ -72,25 +68,8 @@
       ;; since they're not compatible with this middleware
       ((if (:websocket? request) handler wrapped) request))))
 
-(defn on-error [request response]
-  (error-page
-    {:status 403
-     :title (str "Access to " (:uri request) " is not authorized")}))
-
-(defn wrap-restricted [handler]
-  (restrict handler {:handler authenticated?
-                     :on-error on-error}))
-
-(defn wrap-auth [handler]
-  (let [backend (session-backend)]
-    (-> handler
-        (wrap-authentication backend)
-        (wrap-authorization backend))))
-
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
-      wrap-auth
-      wrap-webjars
       wrap-flash
       (wrap-session {:cookie-attrs {:http-only true}})
       (wrap-defaults
