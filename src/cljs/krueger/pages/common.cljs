@@ -23,9 +23,10 @@
    [nav-link :home [:span "Home"] {}]
    (if-let [username (:username @(rf/subscribe [:auth/user]))]
      [:> ui/Menu.Menu {:position "right"}
-      [nav-link :comments [:i.far.fa-comments] {:position "right" :icon true}]
-      [nav-link :messages [:i.far.fa-envelope] {:position "right"}]
-      [nav-link :profile [:span username] {:position "right"}]
-      [nav-action "Logout" #(rf/dispatch [:logout]) {:position "right"}]]
+      [nav-link :comments [:i.far.fa-comments] {:icon true}]
+      [nav-link :messages [:i.far.fa-envelope]]
+      [nav-link :profile [:span username]]
+      [nav-action "Logout" #(rf/dispatch [:logout])]]
      [:> ui/Menu.Menu {:position "right"}
-      [nav-action "Login" #(rf/dispatch [:login]) {:position "right"}]])])
+      [nav-action "Login" #(rf/dispatch [:auth/show-login-modal true])]
+      [nav-action "Register" #(rf/dispatch [:auth/show-registration-modal true])]])])

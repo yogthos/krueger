@@ -5,8 +5,9 @@
             [krueger.ajax :refer [load-interceptors!]]
             [krueger.auth]
             [krueger.common :as common]
+            [krueger.components.auth :as auth]
             [krueger.effects :as effects]
-            [krueger.feeds :as feeds]
+            #_[krueger.feeds :as feeds]
             [krueger.pages.common :refer [navbar]]
             [krueger.pages.comments :refer [comments-page]]
             [krueger.pages.home :refer [home-page]]
@@ -18,6 +19,8 @@
 (defn root-component []
   [:div
    [navbar]
+   [auth/login-modal]
+   [auth/registration-modal]
    [common/error-modal]
    [kf/switch-route (fn [route] (get-in route [:data :name]))
     :home home-page
@@ -34,5 +37,5 @@
               :initial-db     {:auth/user #_{:id 1 :username "foo"} (js->clj js/user)}
               :root-component [root-component]})
   (load-interceptors!)
-  (feeds/start-router!)
+  #_(feeds/start-router!)
   (routing/hook-browser-navigation!))
