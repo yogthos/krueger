@@ -122,8 +122,8 @@
                                     :source-map true
                                     :optimizations :none
                                     :pretty-print true
-                                    #_#_:closure-defines {"re_frame.trace.trace_enabled_QMARK_" true}
-                                    #_#_:preloads [day8.re-frame-10x.preload]}}}}
+                                    :closure-defines {"re_frame.trace.trace_enabled_QMARK_" true}
+                                    :preloads [day8.re-frame-10x.preload]}}}}
 
 
 

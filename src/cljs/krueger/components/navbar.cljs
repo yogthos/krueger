@@ -1,4 +1,4 @@
-(ns krueger.pages.common
+(ns krueger.components.navbar
   (:require
     [cljsjs.semantic-ui-react :as ui]
     [re-frame.core :as rf]))
@@ -21,12 +21,12 @@
 (defn navbar []
   [:> ui/Menu
    [nav-link :home [:span "Home"] {}]
-   (if-let [username (:username @(rf/subscribe [:auth/user]))]
+   (if-let [username (:screenname @(rf/subscribe [:auth/user]))]
      [:> ui/Menu.Menu {:position "right"}
       [nav-link :comments [:i.far.fa-comments] {:icon true}]
       [nav-link :messages [:i.far.fa-envelope]]
       [nav-link :profile [:span username]]
-      [nav-action "Logout" #(rf/dispatch [:logout])]]
+      [nav-action "Logout" #(rf/dispatch [:auth/handle-logout])]]
      [:> ui/Menu.Menu {:position "right"}
       [nav-action "Login" #(rf/dispatch [:auth/show-login-modal true])]
       [nav-action "Register" #(rf/dispatch [:auth/show-registration-modal true])]])])
