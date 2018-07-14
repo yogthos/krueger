@@ -34,7 +34,7 @@
   (kf/start! {:debug?         true
               :router         (routing/->ReititRouter routing/router)
               :chain-links    effects/chain-links
-              :initial-db     {:auth/user #_{:id 1 :username "foo"} (js->clj js/user)}
+              :initial-db     {:auth/user (js->clj js/user :keywordize-keys true)}
               :root-component [root-component]})
   (load-interceptors!)
   #_(feeds/start-router!)

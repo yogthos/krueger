@@ -64,9 +64,10 @@
    ["/register"
     {:post
      {:summary    "handles new user registration"
-      :parameters {:body {:screenname s/Str
-                          :email      s/Str
-                          :pass       s/Str}}
+      :parameters {:body {:screenname   s/Str
+                          :email        s/Str
+                          :pass         s/Str
+                          :pass-confirm s/Str}}
       :responses  {200 {:body s/Any}}
       :handler    (fn [{{params :body} :parameters :as req}]
                     (ok {:result (auth/register! params req)}))}}]

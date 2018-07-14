@@ -24,9 +24,7 @@
 
 (defn home-routes []
   [""
-   {:middleware [middleware/wrap-base
-                 middleware/wrap-csrf
-                 middleware/wrap-formats]}
+   {:middleware [middleware/wrap-csrf]}
    ["/" {:get home-page}]
    ["/registration/:token" {:get issue-token}]])
 

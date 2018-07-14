@@ -15,6 +15,37 @@
   (fn [db _]
     (boolean (::show-registration db))))
 
+(rf/reg-event-db
+  ::registration-error
+  (fn [db [_ error]]
+    (assoc db ::registration-error (-> error :response :error))))
+
+(rf/reg-sub
+  ::registration-error
+  (fn [db _]
+    (::registration-error db)))
+
+
+(kf/reg-chain
+  :auth/handle-registration
+  (fn [{db :db} _]
+    {:db   (dissoc db ::registration-error)
+     :http {:method      :post
+            :url         "/api/register"
+            :params      {:screenname   (::registration-screenname db)
+                          :email        (::registration-email db)
+                          :pass         (::registration-pass db)
+                          :pass-confirm (::registration-pass-confirm db)}
+            :error-event [::login-error]}})
+  (fn [{:keys [db]} [{:keys [user]}]]
+    {:db (-> db
+             (dissoc ::show-registration
+                     ::registration-screenname
+                     ::registration-email
+                     ::registration-pass
+                     ::registration-pass-confirm)
+             (assoc :auth/user user))}))
+
 (defn registration-modal []
   [:> ui/Modal
    {:closeOnDimmerClick false
@@ -24,17 +55,18 @@
     [:> ui/Modal.Description
      [:> ui/Form
       [:> ui/Form.Field
-       [:label "user name"]
-       [:input {:placeholder "user name"}]]
+       [widgets/password-input {:label "user name" :path [::reg-screenname]}]]
       [:> ui/Form.Field
-       [:label "email"]
-       [:input {:placeholder "your email address"}]]
+       [widgets/email-input {:label "email" :path [::registration-email]}]]
       [:> ui/Form.Field
-       [:label "password"]
-       [:input]]
+       [widgets/password-input {:label "password" :path [::registration-pass]}]]
       [:> ui/Form.Field
+       [widgets/password-input {:label "confirm password" :path [::registration-pass-confirm]}]
        [:label "confirm password"]
-       [:input]]]]]
+       [:input]]]
+     (when-let [error @(rf/subscribe [::registration-error])]
+       [:> ui/Message {:negative true}
+        [:> ui/Message.Header (str error)]])]]
    [:> ui/Modal.Actions
     [:> ui/Button
      {:basic   true
@@ -44,7 +76,7 @@
      "cancel"]
     [:> ui/Button
      {:primary true
-      :onClick #(rf/dispatch [:auth/show-registration-modal false])}
+      :onClick #(rf/dispatch [:auth/handle-registration false])}
      "register"]]])
 
 (rf/reg-event-db
@@ -60,7 +92,7 @@
 (rf/reg-event-db
   ::login-error
   (fn [db [_ error]]
-    (assoc db ::login-error error)))
+    (assoc db ::login-error (-> error :response :error))))
 
 (rf/reg-sub
   ::login-error
@@ -78,7 +110,9 @@
             :error-event [::login-error]}})
   (fn [{:keys [db]} [{:keys [user]}]]
     {:db (-> db
-             (dissoc ::show-login)
+             (dissoc ::show-login
+                     ::login-email
+                     ::login-pass)
              (assoc :auth/user user))}))
 
 (kf/reg-chain
@@ -99,11 +133,12 @@
     [:> ui/Modal.Description
      [:> ui/Form
       [:> ui/Form.Field
-       [widgets/text-input {:label "email" :path [::login-email]}]]
+       [widgets/email-input {:label "email" :path [::login-email]}]]
       [:> ui/Form.Field
-       [widgets/text-input {:label "password" :path [::login-pass]}]]]
+       [widgets/password-input {:label "password" :path [::login-pass]}]]]
      (when-let [error @(rf/subscribe [::login-error])]
-       [:p (str error)])]]
+       [:> ui/Message {:negative true}
+        [:> ui/Message.Header (str error)]])]]
    [:> ui/Modal.Actions
     [:> ui/Button
      {:basic   true

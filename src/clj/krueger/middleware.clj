@@ -10,6 +10,7 @@
             [muuntaja.format.transit :as transit-format]
             [muuntaja.middleware :refer [wrap-format wrap-params]]
             [krueger.config :refer [env]]
+            [krueger.layout :refer [*identity*]]
             [ring.middleware.flash :refer [wrap-flash]]
             [immutant.web.middleware :refer [wrap-session]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]])
@@ -61,6 +62,11 @@
                      %
                      {:handlers {java.util.Date time-writer}}))]}}))
 
+(defn wrap-identity [handler]
+  (fn [request]
+    (binding [*identity* (get-in request [:session :identity])]
+      (handler request))))
+
 (defn wrap-formats [handler]
   (let [wrapped (-> handler wrap-params (wrap-format restful-format-options))]
     (fn [request]
@@ -71,6 +77,7 @@
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
       wrap-flash
+      wrap-identity
       (wrap-session {:cookie-attrs {:http-only true}})
       (wrap-defaults
         (-> site-defaults
