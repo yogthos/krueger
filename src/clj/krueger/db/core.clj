@@ -3,7 +3,6 @@
     [camel-snake-kebab.extras :refer [transform-keys]]
     [camel-snake-kebab.core :refer [->kebab-case-keyword]]
     [cheshire.core :refer [generate-string parse-string]]
-    [clj-time.jdbc]
     [clojure.java.jdbc :as jdbc]
     [conman.core :as conman]
     [krueger.config :refer [env]]
@@ -42,6 +41,22 @@
 
 (defmethod hugsql.core/hugsql-result-fn :many [sym]
   'krueger.db.core/result-many-snake->kebab)
+
+(extend-protocol jdbc/IResultSetReadColumn
+  java.sql.Timestamp
+  (result-set-read-column [v _2 _3]
+    (java.util.Date. (.getTime v)))
+  java.sql.Date
+  (result-set-read-column [v _2 _3]
+    (java.util.Date. (.getTime v)))
+  java.sql.Time
+  (result-set-read-column [v _2 _3]
+    (java.util.Date. (.getTime v))))
+
+(extend-protocol jdbc/ISQLValue
+  java.util.Date
+  (sql-value [v]
+    (java.sql.Timestamp. (.getTime v))))
 
 (extend-protocol jdbc/IResultSetReadColumn
   Array

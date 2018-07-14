@@ -6,6 +6,7 @@
             [krueger.auth]
             [krueger.common :as common]
             [krueger.effects :as effects]
+            [krueger.feeds :as feeds]
             [krueger.pages.common :refer [navbar]]
             [krueger.pages.comments :refer [comments-page]]
             [krueger.pages.home :refer [home-page]]
@@ -33,4 +34,5 @@
               :initial-db     {:auth/user #_{:id 1 :username "foo"} (js->clj js/user)}
               :root-component [root-component]})
   (load-interceptors!)
+  (feeds/start-router!)
   (routing/hook-browser-navigation!))

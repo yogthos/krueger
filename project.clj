@@ -8,7 +8,6 @@
                  [buddy "2.0.0"]
                  [camel-snake-kebab "0.4.0"]
                  [cljsjs/react "16.4.0-0"]
-                 [clj-time "0.14.4"]
                  [cljs-ajax "0.7.3"]
                  [compojure "1.6.1"]
                  [com.cognitect/transit-clj "0.8.309"]
@@ -45,7 +44,9 @@
                  [metosin/reitit "0.1.3"]
                  [metosin/schema-tools "0.10.3"]
                  [cljsjs/semantic-ui-react "0.81.1-0"]
-                 [cljsjs/react-dom "16.4.0-0"]]
+                 [cljsjs/react-dom "16.4.0-0"]
+                 [com.taoensso/sente "1.12.0"]
+                 [clojure.java-time "0.3.2"]]
 
   :min-lein-version "2.0.0"
 

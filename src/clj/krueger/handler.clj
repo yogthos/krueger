@@ -2,6 +2,7 @@
   (:require
     [krueger.layout :refer [error-page]]
     [krueger.routes.home :refer [home-routes]]
+    [krueger.routes.services.feeds :refer [feed-routes]]
     [krueger.routes.services :refer [service-routes]]
     [reitit.swagger-ui :as swagger-ui]
     [reitit.ring :as ring]
@@ -20,7 +21,8 @@
   (ring/ring-handler
     (ring/router
       [(home-routes)
-       (service-routes)])
+       (service-routes)
+       (feed-routes)])
     (ring/routes
       (swagger-ui/create-swagger-ui-handler
         {:path "/swagger-ui"

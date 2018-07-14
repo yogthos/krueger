@@ -13,7 +13,7 @@
             [ring.middleware.flash :refer [wrap-flash]]
             [immutant.web.middleware :refer [wrap-session]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]])
-  (:import [org.joda.time ReadableInstant]))
+  (:import java.time.ZonedDateTime))
 
 (defn wrap-internal-error [handler]
   (fn [req]
@@ -33,19 +33,20 @@
        {:status 403
         :title "Invalid anti-forgery token"})}))
 
-(def joda-time-writer
+#_(def time-writer
   (transit/write-handler
     (constantly "m")
-    (fn [v] (-> ^ReadableInstant v .getMillis))
-    (fn [v] (-> ^ReadableInstant v .getMillis .toString))))
+    (fn [v] (.getTime v) #_(-> ^ReadableInstant v .getMillis))
+    (fn [v] (.toString (.getTime v)) #_(-> ^ReadableInstant v .getMillis .toString))))
 
-(cheshire/add-encoder
-  org.joda.time.DateTime
+#_(cheshire/add-encoder
+    java.util.Date
   (fn [c jsonGenerator]
-    (.writeString jsonGenerator (-> ^ReadableInstant c .getMillis .toString))))
+    (.writeString jsonGenerator (.toString (.geTime c)))))
 
 (def restful-format-options
-  (update
+  muuntaja/default-options
+  #_(update
     muuntaja/default-options
     :formats
     merge
@@ -58,7 +59,7 @@
                    :json
                    (merge
                      %
-                     {:handlers {org.joda.time.DateTime joda-time-writer}}))]}}))
+                     {:handlers {java.util.Date time-writer}}))]}}))
 
 (defn wrap-formats [handler]
   (let [wrapped (-> handler wrap-params (wrap-format restful-format-options))]
