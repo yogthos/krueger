@@ -14,7 +14,7 @@
   (log/info "registration link activated for" token)
   (try
     (let [user (user-db/activate-user! token)]
-      (-> (response/found "/registration")
+      (-> (response/found "/")
           (assoc :session (assoc session :identity user))))
     (catch IllegalArgumentException e
       (layout/error-page

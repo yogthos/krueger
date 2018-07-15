@@ -1,5 +1,6 @@
 (ns krueger.feeds
-  (:require [taoensso.sente :as sente]))
+  (:require
+    [taoensso.sente :as sente]))
 
 (def connection (sente/make-channel-socket! "/ws" {:type :auto}))
 

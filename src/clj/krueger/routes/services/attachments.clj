@@ -1,20 +1,22 @@
 (ns krueger.routes.services.attachments
-  (:require [clojure.tools.logging :as log]
-            [ring.util.http-response :refer :all]
-            [krueger.layout :refer [error-page]]
-            [krueger.db.posts :as db]
-            [krueger.routes.services.common :refer [handler]]
-            [schema.core :as s])
-  (:import [java.io ByteArrayOutputStream
-                    ByteArrayInputStream
-                    FileInputStream]))
+  (:require
+    [clojure.tools.logging :as log]
+    [ring.util.http-response :refer :all]
+    [krueger.layout :refer [error-page]]
+    [krueger.db.posts :as db]
+    [krueger.routes.services.common :refer [handler]]
+    [schema.core :as s])
+  (:import
+    [java.io ByteArrayOutputStream
+             ByteArrayInputStream
+             FileInputStream]))
 
 (def AttachmentResult
   {(s/optional-key :name)  s/Str
    (s/optional-key :error) s/Str})
 
 (defn file->byte-array [x]
-  (with-open [input  (FileInputStream. x)
+  (with-open [input (FileInputStream. x)
               buffer (ByteArrayOutputStream.)]
     (clojure.java.io/copy input buffer)
     (.toByteArray buffer)))

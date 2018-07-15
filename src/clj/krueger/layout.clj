@@ -1,8 +1,9 @@
 (ns krueger.layout
-  (:require [selmer.parser :as parser]
-            [ring.util.http-response :refer [content-type ok]]
-            [ring.util.anti-forgery :refer [anti-forgery-field]]
-            [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]))
+  (:require
+    [selmer.parser :as parser]
+    [ring.util.http-response :refer [content-type ok]]
+    [ring.util.anti-forgery :refer [anti-forgery-field]]
+    [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]))
 
 
 (declare ^:dynamic *identity*)

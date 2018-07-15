@@ -1,12 +1,13 @@
 (ns krueger.core
-  (:require [krueger.handler :as handler]
-            [luminus.repl-server :as repl]
-            [luminus.http-server :as http]
-            [luminus-migrations.core :as migrations]
-            [krueger.config :refer [env]]
-            [clojure.tools.cli :refer [parse-opts]]
-            [clojure.tools.logging :as log]
-            [mount.core :as mount])
+  (:require
+    [krueger.handler :as handler]
+    [luminus.repl-server :as repl]
+    [luminus.http-server :as http]
+    [luminus-migrations.core :as migrations]
+    [krueger.config :refer [env]]
+    [clojure.tools.cli :refer [parse-opts]]
+    [clojure.tools.logging :as log]
+    [mount.core :as mount])
   (:gen-class))
 
 (def cli-options
@@ -17,7 +18,7 @@
   :start
   (http/start
     (-> env
-        (assoc  :handler #'handler/app)
+        (assoc :handler #'handler/app)
         (update :io-threads #(or % (* 2 (.availableProcessors (Runtime/getRuntime)))))
         (update :port #(or (-> env :options :port) %))))
   :stop
@@ -59,4 +60,4 @@
       (System/exit 0))
     :else
     (start-app args)))
-  
+

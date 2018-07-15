@@ -1,20 +1,20 @@
 (ns krueger.core
-  (:require [reagent.core :as r]
-            [kee-frame.core :as kf]
-            [ajax.core :refer [GET POST]]
-            [krueger.ajax :refer [load-interceptors!]]
-            [krueger.auth]
-            [krueger.common :as common]
-            [krueger.components.auth :as auth]
-            [krueger.components.navbar :refer [navbar]]
-            [krueger.effects :as effects]
-            #_[krueger.feeds :as feeds]
-            [krueger.pages.comments :refer [comments-page]]
-            [krueger.pages.home :refer [home-page]]
-            [krueger.pages.messages :refer [messages-page]]
-            [krueger.pages.post :refer [post-page]]
-            [krueger.pages.profile :refer [profile-page]]
-            [krueger.routing :as routing]))
+  (:require
+    [kee-frame.core :as kf]
+    [ajax.core :refer [GET POST]]
+    [krueger.ajax :refer [load-interceptors!]]
+    [krueger.auth]
+    [krueger.common :as common]
+    [krueger.components.auth :as auth]
+    [krueger.components.navbar :refer [navbar]]
+    [krueger.effects :as effects]
+    #_[krueger.feeds :as feeds]
+    [krueger.pages.comments :refer [comments-page]]
+    [krueger.pages.home :refer [home-page]]
+    [krueger.pages.messages :refer [messages-page]]
+    [krueger.pages.post :refer [post-page]]
+    [krueger.pages.profile :refer [profile-page]]
+    [krueger.routing :as routing]))
 
 (defn root-component []
   [:div
