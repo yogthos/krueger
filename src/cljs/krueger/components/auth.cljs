@@ -32,18 +32,11 @@
     {:db   (dissoc db ::registration-error)
      :http {:method      :post
             :url         "/api/register"
-            :params      {:screenname   (::registration-screenname db)
-                          :email        (::registration-email db)
-                          :pass         (::registration-pass db)
-                          :pass-confirm (::registration-pass-confirm db)}
+            :params      (::registration db)
             :error-event [::login-error]}})
   (fn [{:keys [db]} [{:keys [user]}]]
     {:db (-> db
-             (dissoc ::show-registration
-                     ::registration-screenname
-                     ::registration-email
-                     ::registration-pass
-                     ::registration-pass-confirm)
+             (dissoc ::registration)
              (assoc :auth/user user))}))
 
 (defn registration-modal []
@@ -55,15 +48,13 @@
     [:> ui/Modal.Description
      [:> ui/Form
       [:> ui/Form.Field
-       [widgets/password-input {:label "user name" :path [::reg-screenname]}]]
+       [widgets/password-input {:label "user name" :path [::registration :screenname]}]]
       [:> ui/Form.Field
-       [widgets/email-input {:label "email" :path [::registration-email]}]]
+       [widgets/email-input {:label "email" :path [::registration :email]}]]
       [:> ui/Form.Field
-       [widgets/password-input {:label "password" :path [::registration-pass]}]]
+       [widgets/password-input {:label "password" :path [::registration :pass]}]]
       [:> ui/Form.Field
-       [widgets/password-input {:label "confirm password" :path [::registration-pass-confirm]}]
-       [:label "confirm password"]
-       [:input]]]
+       [widgets/password-input {:label "confirm password" :path [::registration :pass-confirm]}]]]
      (when-let [error @(rf/subscribe [::registration-error])]
        [:> ui/Message {:negative true}
         [:> ui/Message.Header (str error)]])]]
@@ -105,14 +96,12 @@
     {:db   (dissoc db ::login-error)
      :http {:method      :post
             :url         "/api/login"
-            :params      {:email (::login-email db)
-                          :pass  (::login-pass db)}
+            :params      (::login db)
             :error-event [::login-error]}})
   (fn [{:keys [db]} [{:keys [user]}]]
     {:db (-> db
              (dissoc ::show-login
-                     ::login-email
-                     ::login-pass)
+                     ::login)
              (assoc :auth/user user))}))
 
 (kf/reg-chain
@@ -133,9 +122,9 @@
     [:> ui/Modal.Description
      [:> ui/Form
       [:> ui/Form.Field
-       [widgets/email-input {:label "email" :path [::login-email]}]]
+       [widgets/email-input {:label "email" :path [::login :email]}]]
       [:> ui/Form.Field
-       [widgets/password-input {:label "password" :path [::login-pass]}]]]
+       [widgets/password-input {:label "password" :path [::login :pass]}]]]
      (when-let [error @(rf/subscribe [::login-error])]
        [:> ui/Message {:negative true}
         [:> ui/Message.Header (str error)]])]]
