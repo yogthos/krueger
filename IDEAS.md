@@ -26,6 +26,8 @@
 Use Twitter style model where users reshare posts instead of upvoting. This will make the post
 show up in the timeline of the user resharing the post and become visible to their followers.
 
+Have a view to show posts by number of reshares and the category within a given time period.
+
 ### focus
 
 Encourage focus on local news, or small groups with shared interests.
