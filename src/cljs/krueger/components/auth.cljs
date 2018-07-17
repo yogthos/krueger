@@ -34,7 +34,7 @@
      :http {:method      :post
             :url         "/api/register"
             :params      (::registration db)
-            :error-event [::login-error]}})
+            :error-event [::registration-error]}})
   (fn [{:keys [db]} [{:keys [user]}]]
     {:db (-> db
              (dissoc ::registration)

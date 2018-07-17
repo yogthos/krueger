@@ -64,6 +64,12 @@
     (.forward (.-history js/window))))
 
 (rf/reg-event-fx
+  :navigate-by-route-path
+  (fn [_ [_ path]]
+    (let [route (match-route path)]
+      {:navigate-to [(-> route :data :name) (:path-params route)]})))
+
+(rf/reg-event-fx
   :navigate-by-route-name
   (fn [_ [_ route-name]]
     (let [route (reitit/match-by-name router route-name)]
