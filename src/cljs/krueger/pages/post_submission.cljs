@@ -10,12 +10,22 @@
   (fn [{db :db} _]
     {:db   (dissoc db ::post)
      :http {:method      :post
-            :url         "/api/register"
-            :params      (::post db)
-            :error-event [::post]}})
+            :url         "/api/restricted/post"
+            :params      (assoc (::post db) :tags [1])
+            :error-event [::post-error]}})
   (fn [{:keys [db]} [{:keys [id]}]]
     {:db (-> db (dissoc ::post))
      :dispatch [:navigate-by-route-path id]}))
+
+(rf/reg-event-db
+  ::post-error
+  (fn [db [_ error]]
+    (assoc db ::post-error (-> error :response :error))))
+
+(rf/reg-sub
+  ::post-error
+  (fn [db _]
+    (::post-error db)))
 
 (defn submit-post-page []
   [:> ui/Grid
@@ -28,10 +38,12 @@
       [widgets/text-input {:label "URL:" :path [::post :url]}]]
      [:> ui/Form.Field
       [widgets/text-input {:label "Title:" :path [::post :title]}]]
+     ;;todo searchable typeahead tags should have lable, description, id (number)
      [:> ui/Form.Field
       [widgets/text-input {:label "Tags:" :path [::post :tags]}]]
      [:> ui/Form.Field
       [widgets/textarea {:label "Text:" :path [::post :text]}]]
+     [widgets/error-notification ::post-error]
      [:div
       [:> ui/Button
        {:basic   true

@@ -40,3 +40,8 @@
 
 (defn password-input [opts]
   (form-input :input (assoc opts :type :password)))
+
+(defn error-notification [error-path]
+  (when-let [error @(rf/subscribe [error-path])]
+    [:> ui/Message {:negative true}
+     [:> ui/Message.Header (str error)]]))

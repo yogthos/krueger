@@ -57,9 +57,7 @@
        [widgets/password-input {:label "password" :path [::registration :pass]}]]
       [:> ui/Form.Field
        [widgets/password-input {:label "confirm password" :path [::registration :pass-confirm]}]]]
-     (when-let [error @(rf/subscribe [::registration-error])]
-       [:> ui/Message {:negative true}
-        [:> ui/Message.Header (str error)]])]]
+     [widgets/error-notification ::registration-error]]]
    [:> ui/Modal.Actions
     [:> ui/Button
      {:basic   true
@@ -130,9 +128,7 @@
        [widgets/password-input {:label     "password"
                                 :path      [::login :pass]
                                 :on-key-up (dispatch-on-enter [:auth/handle-login])}]]]
-     (when-let [error @(rf/subscribe [::login-error])]
-       [:> ui/Message {:negative true}
-        [:> ui/Message.Header (str error)]])]]
+     [widgets/error-notification ::login-error]]]
    [:> ui/Modal.Actions
     [:> ui/Button
      {:basic   true
