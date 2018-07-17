@@ -13,6 +13,7 @@
     [krueger.pages.home :refer [home-page]]
     [krueger.pages.messages :refer [messages-page]]
     [krueger.pages.post :refer [post-page]]
+    [krueger.pages.post-submission :refer [submit-post-page]]
     [krueger.pages.profile :refer [profile-page]]
     [krueger.routing :as routing]))
 
@@ -27,6 +28,7 @@
     :comments comments-page
     :messages messages-page
     :post post-page
+    :submit-post submit-post-page
     :profile profile-page
     nil [:div>h1 "404"]]])
 

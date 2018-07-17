@@ -13,8 +13,11 @@
    ["/comments" :comments]
    ["/messages" :messages]
    ["/post/:id" :post]
+   ["/posts/new" :submit-post]
    ["/profile" :profile]
    ["/submit" :submit]])
+
+
 
 (def router (reitit/router routes))
 

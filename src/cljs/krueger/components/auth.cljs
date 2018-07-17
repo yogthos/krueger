@@ -42,7 +42,8 @@
 (defn registration-modal []
   [:> ui/Modal
    {:closeOnDimmerClick false
-    :open               @(rf/subscribe [::show-registration])}
+    :open               @(rf/subscribe [::show-registration])
+    :size "tiny"}
    [:> ui/Modal.Header "User Registration"]
    [:> ui/Modal.Content
     [:> ui/Modal.Description
@@ -116,7 +117,8 @@
 (defn login-modal []
   [:> ui/Modal
    {:closeOnDimmerClick false
-    :open               @(rf/subscribe [::show-login])}
+    :open               @(rf/subscribe [::show-login])
+    :size "tiny"}
    [:> ui/Modal.Header "User Login"]
    [:> ui/Modal.Content
     [:> ui/Modal.Description

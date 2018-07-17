@@ -23,6 +23,7 @@
    [nav-link :home [:span "Home"] {}]
    (if-let [username (:screenname @(rf/subscribe [:auth/user]))]
      [:> ui/Menu.Menu {:position "right"}
+      [nav-link :submit-post [:i.fas.fa-feather] {:icon true}]
       [nav-link :comments [:i.far.fa-comments] {:icon true}]
       [nav-link :messages [:i.far.fa-envelope]]
       [nav-link :profile [:span username]]
