@@ -54,6 +54,16 @@
     (assoc db ::route route)))
 
 (rf/reg-event-fx
+  :nav/back
+  (fn [_ _]
+    (.back (.-history js/window))))
+
+(rf/reg-event-fx
+  :nav/forward
+  (fn [_ _]
+    (.forward (.-history js/window))))
+
+(rf/reg-event-fx
   :navigate-by-route-name
   (fn [_ [_ route-name]]
     (let [route (reitit/match-by-name router route-name)]

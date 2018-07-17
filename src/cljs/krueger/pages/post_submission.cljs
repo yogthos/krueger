@@ -30,11 +30,12 @@
           {:basic   true
            :color   "red"
            :floated "left"
-           :onClick #(rf/dispatch [:auth/show-registration-modal false])}
+           ;;todo
+           :onClick #(rf/dispatch [:nav/back])}
           "cancel"]
          [:> ui/Button
           {:primary true
-           :onClick #(rf/dispatch [:auth/handle-registration false])}
+           :onClick #(rf/dispatch [::submit-post])}
           "submit"]]]]]]]])
 
 (rf/reg-event-fx

@@ -1,6 +1,7 @@
 (ns krueger.components.auth
   (:require
     [krueger.components.widgets :as widgets]
+    [krueger.input-events :refer [dispatch-on-enter]]
     [cljsjs.semantic-ui-react :as ui]
     [re-frame.core :as rf]
     [kee-frame.core :as kf]))
@@ -43,7 +44,7 @@
   [:> ui/Modal
    {:closeOnDimmerClick false
     :open               @(rf/subscribe [::show-registration])
-    :size "tiny"}
+    :size               "tiny"}
    [:> ui/Modal.Header "User Registration"]
    [:> ui/Modal.Content
     [:> ui/Modal.Description
@@ -118,7 +119,7 @@
   [:> ui/Modal
    {:closeOnDimmerClick false
     :open               @(rf/subscribe [::show-login])
-    :size "tiny"}
+    :size               "tiny"}
    [:> ui/Modal.Header "User Login"]
    [:> ui/Modal.Content
     [:> ui/Modal.Description
@@ -126,7 +127,9 @@
       [:> ui/Form.Field
        [widgets/email-input {:label "email" :path [::login :email]}]]
       [:> ui/Form.Field
-       [widgets/password-input {:label "password" :path [::login :pass]}]]]
+       [widgets/password-input {:label     "password"
+                                :path      [::login :pass]
+                                :on-key-up (dispatch-on-enter [:auth/handle-login])}]]]
      (when-let [error @(rf/subscribe [::login-error])]
        [:> ui/Message {:negative true}
         [:> ui/Message.Header (str error)]])]]
