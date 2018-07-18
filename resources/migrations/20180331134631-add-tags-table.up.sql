@@ -1,3 +1,4 @@
 CREATE TABLE tags
 (id SERIAL PRIMARY KEY,
- label VARCHAR(50));
+ description VARCHAR(140) NOT NULL,
+ label VARCHAR(50) NOT NULL);

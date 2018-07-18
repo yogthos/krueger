@@ -1,6 +1,7 @@
 (ns krueger.components.widgets
   (:require
-    [re-frame.core :as rf]))
+    [re-frame.core :as rf]
+    [cljsjs.semantic-ui-react :as ui]))
 
 (rf/reg-event-db
   :input/set-value

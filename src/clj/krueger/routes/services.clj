@@ -102,15 +102,24 @@
    ["/admin"
     {:middleware [(partial wrap-restricted admin?)]}
     ["/user"
-     {:put {:summary    "update user account"
-            :parameters {:body {:user-id                       s/Int
-                                :screenname                    s/Str
-                                (s/optional-key :pass)         (s/maybe s/Str)
-                                (s/optional-key :pass-confirm) (s/maybe s/Str)
-                                :admin                         s/Bool
-                                :active                        s/Bool}}
-            :handler    (fn [{{params :body} :parameters}]
-                          (auth/update-user! params))}}]]
+     {:put
+      {:summary    "update user account"
+       :parameters {:body {:user-id                       s/Int
+                           :screenname                    s/Str
+                           (s/optional-key :pass)         (s/maybe s/Str)
+                           (s/optional-key :pass-confirm) (s/maybe s/Str)
+                           :admin                         s/Bool
+                           :active                        s/Bool}}
+       :handler    (fn [{{params :body} :parameters}]
+                     (auth/update-user! params))}}]
+    ["/tag"
+     {:post
+      {:summary "create a new tag"
+       :parameters {:body {:label s/Str
+                           :description s/Str}}
+       :responses  {200 {:body {:id s/Keyword}}}
+       :handler (fn [{{params :body} :parameters}]
+                  (posts-db/create-tag params))}}]]
 
    ;; private
    ["/restricted"

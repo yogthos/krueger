@@ -86,3 +86,5 @@
                :author "bob@bob.com"})
 
 #_(get-post-previews "foo" 0)
+
+#_(create-tag {:label "clojure" :description "stories related to Clojure"})
