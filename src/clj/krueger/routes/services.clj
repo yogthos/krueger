@@ -1,7 +1,5 @@
 (ns krueger.routes.services
   (:require
-    [buddy.auth.accessrules :refer [restrict]]
-    [buddy.auth :refer [authenticated?]]
     [krueger.db.core :as db]
     [krueger.db.posts :as posts-db]
     [krueger.routes.services.attachments :as attachments]
@@ -17,17 +15,16 @@
     [schema.core :as s]))
 
 (defn admin? [request]
-  (:admin (:identity request)))
+  (-> request :session :identity :admin))
 
 (defn user? [request]
-  (:identity request))
-
-(defn access-error [_ _]
-  (unauthorized {:error "unauthorized"}))
+  (-> request :session :identity))
 
 (defn wrap-restricted [rule handler]
-  (restrict handler {:handler  rule
-                     :on-error access-error}))
+  (fn [request]
+    (if (rule request)
+      (handler request)
+      (unauthorized {:error "unauthorized"}))))
 
 (defn service-routes []
   ["/api"

@@ -1,5 +1,6 @@
 (ns krueger.routing
   (:require
+    [krueger.client-routes :refer [routes]]
     [kee-frame.api :as api]
     [re-frame.core :as rf]
     [reitit.core :as reitit]
@@ -8,19 +9,7 @@
     [goog.history.EventType :as HistoryEventType])
   (:import goog.History))
 
-(def routes
-  [["/" :home]
-   ["/comments" :comments]
-   ["/messages" :messages]
-   ["/post/:id" :post]
-   ["/posts/new" :submit-post]
-   ["/profile" :profile]
-   ["/submit" :submit]])
-
-
-
 (def router (reitit/router routes))
-
 
 (defrecord ReititRouter [routes]
   api/Router

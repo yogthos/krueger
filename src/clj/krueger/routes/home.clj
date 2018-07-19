@@ -5,6 +5,7 @@
     [krueger.db.users :as user-db]
     [krueger.layout :as layout]
     [krueger.middleware :as middleware]
+    [krueger.client-routes :refer [routes]]
     [ring.util.http-response :as response]))
 
 (defn home-page [_]
@@ -23,9 +24,11 @@
          :message (.getMessage e)}))))
 
 (defn home-routes []
-  [""
-   {:middleware [middleware/wrap-csrf]}
-   ["/" {:get home-page}]
-   ["/registration/:token" {:get issue-token}]])
+  (into
+    [""
+     {:middleware [middleware/wrap-csrf]}
+     ["/registration/:token" {:get issue-token}]]
+    (for [[route] routes]
+      [route {:get home-page}])))
 
 

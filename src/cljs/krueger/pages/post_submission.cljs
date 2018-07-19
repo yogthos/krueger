@@ -11,7 +11,7 @@
     {:db   (dissoc db ::post)
      :http {:method      :post
             :url         "/api/restricted/post"
-            :params      (assoc (::post db) :tags [1])
+            :params      {:post (::post db)}
             :error-event [::post-error]}})
   (fn [{:keys [db]} [{:keys [id]}]]
     {:db (-> db (dissoc ::post))
@@ -54,6 +54,7 @@
        "cancel"]
       [:> ui/Button
        {:primary true
+        :floated "right"
         :onClick #(rf/dispatch [::submit-post])}
        "submit"]]]]])
 

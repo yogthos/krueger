@@ -30,7 +30,7 @@
     :post post-page
     :submit-post submit-post-page
     :profile profile-page
-    nil [:div>h1 "404"]]])
+    nil nil]])
 
 (defn init! []
   (kf/start! {:debug?         true

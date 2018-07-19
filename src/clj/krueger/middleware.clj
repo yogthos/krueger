@@ -1,19 +1,19 @@
 (ns krueger.middleware
   (:require
-    [krueger.env :refer [defaults]]
     [cheshire.generate :as cheshire]
-    [cognitect.transit :as transit]
     [clojure.tools.logging :as log]
-    [krueger.layout :refer [error-page]]
-    [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
+    [cognitect.transit :as transit]
+    [immutant.web.middleware :refer [wrap-session]]
+    [krueger.config :refer [env]]
+    [krueger.env :refer [defaults]]
+    [krueger.layout :refer [error-page *identity*]]
     [muuntaja.core :as muuntaja]
     [muuntaja.format.json :refer [json-format]]
     [muuntaja.format.transit :as transit-format]
     [muuntaja.middleware :refer [wrap-format wrap-params]]
-    [krueger.config :refer [env]]
-    [krueger.layout :refer [*identity*]]
+    [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
     [ring.middleware.flash :refer [wrap-flash]]
-    [immutant.web.middleware :refer [wrap-session]]
+
     [ring.middleware.defaults :refer [site-defaults wrap-defaults]])
   (:import java.time.ZonedDateTime))
 
