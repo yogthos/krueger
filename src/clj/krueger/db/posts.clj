@@ -22,9 +22,9 @@
 ;;; posts
 (defn get-post-previews [category page]
   ;;TODO: filter by category
-  {:page (map
-           #(update % :id encode-64)
-           (post-previews {:limit posts-per-page :offset page}))})
+  {:posts (map
+            #(update % :id encode-64)
+            (post-previews {:limit posts-per-page :offset page}))})
 
 (defn save-post! [post]
   (add-post!
@@ -46,20 +46,20 @@
 (defn upvote-post! [email slug]
   (let [postid (decode-64 slug)]
     (jdbc/with-db-transaction [t-conn *db*]
-      (when-not (upvoted? t-conn {:email email :postid postid})
-        (upvote! t-conn {:id postid})
-        (set-votes! t-conn {:upvoted true :downvoted false :email email :postid postid})))))
+                              (when-not (upvoted? t-conn {:email email :postid postid})
+                                (upvote! t-conn {:id postid})
+                                (set-votes! t-conn {:upvoted true :downvoted false :email email :postid postid})))))
 
 (defn downvote-post! [email slug]
   (let [postid (decode-64 slug)]
     (jdbc/with-db-transaction [t-conn *db*]
-      (when-not (upvoted? t-conn {:email email :postid postid})
-        (downvote! t-conn {:id postid})
-        (set-votes! t-conn
-                    {:upvoted   false
-                     :downvoted true
-                     :email     email
-                     :postid    postid})))))
+                              (when-not (upvoted? t-conn {:email email :postid postid})
+                                (downvote! t-conn {:id postid})
+                                (set-votes! t-conn
+                                            {:upvoted   false
+                                             :downvoted true
+                                             :email     email
+                                             :postid    postid})))))
 
 (defn add-post-comment! [comment]
   (-> (merge {:parent nil} comment)

@@ -74,7 +74,8 @@
      {:summary    "return posts with the given page offset"
       :parameters {:query {:category s/Str
                            :page     Long}}
-      :responses  {200 {:body s/Any}}
+      :responses  {200 {:body posts/PostPreviews}}
+      ;;todo add comment count to posts
       :handler    (fn [{{{:keys [category page]} :query} :parameters}]
                     (ok (posts-db/get-post-previews category page)))}}]
 

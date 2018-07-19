@@ -54,4 +54,4 @@
    :upvotes                  s/Num
    :downvotes                s/Num})
 
-(s/defschema PostPreviews {:page [PostPreview]})
+(s/defschema PostPreviews {:posts [PostPreview]})
