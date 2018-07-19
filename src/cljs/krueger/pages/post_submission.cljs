@@ -15,7 +15,7 @@
             :error-event [::post-error]}})
   (fn [{:keys [db]} [{:keys [id]}]]
     {:db       (-> db (dissoc ::post))
-     :dispatch [:navigate-by-route-path id]}))
+     :dispatch [:nav/by-route-path id]}))
 
 (rf/reg-event-db
   ::post-error
@@ -53,9 +53,9 @@
         :onClick #(rf/dispatch [:nav/back])}
        "cancel"]
       [:> ui/Button
-       {:primary true
-        :floated "right"
-        :onClick #(rf/dispatch [::submit-post])}
+       {:primary  true
+        :floated  "right"
+        :on-click #(rf/dispatch [::submit-post])}
        "submit"]]]]])
 
 (rf/reg-event-fx
@@ -65,9 +65,9 @@
     (merge
       {:db (dissoc db ::post)}
       (when-not (:auth/user db)
-        {:dispatch [:auth/show-login-modal true]}))))
+        {:dispatch [:auth/close-login-modal true]}))))
 
 (kf/reg-controller
   ::post-submission-controller
-  {:params (constantly true)
+  {:params (fn [route] (or (= (-> route :data :name) :submit-post) nil))
    :start  (fn [_] [::init-submit-post-page])})

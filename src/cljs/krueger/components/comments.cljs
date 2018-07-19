@@ -1,6 +1,7 @@
 (ns krueger.components.comments
   (:require
     [krueger.components.widgets :as widgets]
+    [cljsjs.semantic-ui-react :as ui]
     [reagent.core :as r]
     [re-frame.core :as rf]))
 

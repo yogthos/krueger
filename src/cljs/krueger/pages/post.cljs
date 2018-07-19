@@ -38,7 +38,7 @@
    [:> ui/Form.Field
     [:> ui/Button
      {:primary true
-      :onClick #(rf/dispatch [::submit-comment])}
+      :on-click #(rf/dispatch [::submit-comment])}
      "submit"]]])
 
 (defn comments-list []

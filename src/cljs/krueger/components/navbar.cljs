@@ -7,7 +7,7 @@
   [:> ui/MenuItem
    (merge
      {:active  (= @(rf/subscribe [:nav/page]) route)
-      :onClick #(rf/dispatch [:navigate-by-route-name route])}
+      :onClick #(rf/dispatch [:nav/by-route-name route])}
      opts)
    content])
 
@@ -29,5 +29,5 @@
       [nav-link :profile [:span username]]
       [nav-action "Logout" [:auth/handle-logout]]]
      [:> ui/Menu.Menu {:position "right"}
-      [nav-action "Login" [:auth/show-login-modal true]]
+      [nav-action "Login" [:auth/close-login-modal true]]
       [nav-action "Register" [:auth/show-registration-modal true]]])])

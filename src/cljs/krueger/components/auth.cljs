@@ -42,7 +42,7 @@
 
 (defn registration-modal []
   [:> ui/Modal
-   {:closeOnDimmerClick false
+   {:close-on-dimmer-click false
     :open               @(rf/subscribe [::show-registration])
     :size               "tiny"}
    [:> ui/Modal.Header "User Registration"]
@@ -63,17 +63,20 @@
      {:basic   true
       :color   "red"
       :floated "left"
-      :onClick #(rf/dispatch [:auth/show-registration-modal false])}
+      :on-click #(rf/dispatch [:auth/show-registration-modal false])}
      "cancel"]
     [:> ui/Button
      {:primary true
-      :onClick #(rf/dispatch [:auth/handle-registration false])}
+      :on-click #(rf/dispatch [:auth/handle-registration false])}
      "register"]]])
 
-(rf/reg-event-db
-  :auth/show-login-modal
-  (fn [db [_ show?]]
-    (assoc db ::show-login show?)))
+(rf/reg-event-fx
+  :auth/close-login-modal
+  (fn [{db :db} [_ show?]]
+    (merge
+      {:db (assoc db ::show-login show?)}
+      (when-not show?
+        {:dispatch [:nav/by-route-name :home]}))))
 
 (rf/reg-sub
   ::show-login
@@ -115,7 +118,7 @@
 
 (defn login-modal []
   [:> ui/Modal
-   {:closeOnDimmerClick false
+   {:close-on-dimmer-click false
     :open               @(rf/subscribe [::show-login])
     :size               "tiny"}
    [:> ui/Modal.Header "User Login"]
@@ -134,9 +137,9 @@
      {:basic   true
       :color   "red"
       :floated "left"
-      :onClick #(rf/dispatch [:auth/show-login-modal false])}
+      :on-click #(rf/dispatch [:auth/close-login-modal false])}
      "cancel"]
     [:> ui/Button
      {:primary true
-      :onClick #(rf/dispatch [:auth/handle-login])}
+      :on-click #(rf/dispatch [:auth/handle-login])}
      "login"]]])
