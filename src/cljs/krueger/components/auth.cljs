@@ -108,7 +108,7 @@
   :auth/handle-logout
   (fn [_ _]
     {:http {:method      :post
-            :url         "/api/logout"
+            :url         "/api/restricted/logout"
             :error-event [:common/set-error]}})
   (fn [{:keys [db]} _]
     {:db (dissoc db :auth/user)}))

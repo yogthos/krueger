@@ -14,7 +14,7 @@
             :params      {:post (::post db)}
             :error-event [::post-error]}})
   (fn [{:keys [db]} [{:keys [id]}]]
-    {:db (-> db (dissoc ::post))
+    {:db       (-> db (dissoc ::post))
      :dispatch [:navigate-by-route-path id]}))
 
 (rf/reg-event-db
@@ -61,7 +61,11 @@
 (rf/reg-event-fx
   ::init-submit-post-page
   (fn [{:keys [db]} _]
-    (dissoc db ::post)))
+    (println "loading submission page" (:auth/user db))
+    (merge
+      {:db (dissoc db ::post)}
+      (when-not (:auth/user db)
+        {:dispatch [:auth/show-login-modal true]}))))
 
 (kf/reg-controller
   ::post-submission-controller

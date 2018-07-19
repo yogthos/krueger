@@ -15,7 +15,7 @@
   [:> ui/MenuItem
    (merge
      {:name    title
-      :onClick action}
+      :onClick #(rf/dispatch action)}
      opts)])
 
 (defn navbar []
@@ -27,7 +27,7 @@
       [nav-link :comments [:i.far.fa-comments] {:icon true}]
       [nav-link :messages [:i.far.fa-envelope]]
       [nav-link :profile [:span username]]
-      [nav-action "Logout" #(rf/dispatch [:auth/handle-logout])]]
+      [nav-action "Logout" [:auth/handle-logout]]]
      [:> ui/Menu.Menu {:position "right"}
-      [nav-action "Login" #(rf/dispatch [:auth/show-login-modal true])]
-      [nav-action "Register" #(rf/dispatch [:auth/show-registration-modal true])]])])
+      [nav-action "Login" [:auth/show-login-modal true]]
+      [nav-action "Register" [:auth/show-registration-modal true]]])])
