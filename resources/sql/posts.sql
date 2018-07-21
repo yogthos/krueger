@@ -7,14 +7,16 @@ INSERT INTO posts
 
 -- :name post-by-id :? :1
 -- :doc retrieve a post using the id
-SELECT id, author, title, preview, url, text, tags, upvotes, downvotes, timestamp
-  FROM posts
+SELECT p.id, u.screenname as author, p.title, p.preview, p.url, p.text, p.tags, p.upvotes, p.downvotes, p.timestamp
+  FROM posts p
+  JOIN users u on author = email
   WHERE id = :id
 
 -- :name post-previews :? :*
 -- :doc retrieve previews given the offset
-SELECT id, author, title, preview, url, tags, upvotes, downvotes, timestamp
-  FROM posts
+SELECT p.id, u.screenname as author, p.title, p.preview, p.url, p.tags, p.upvotes, p.downvotes, p.timestamp
+  FROM posts p
+  JOIN users u on author = email
   LIMIT :limit OFFSET :offset
 
 -- :name total-posts :? :1

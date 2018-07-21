@@ -9,6 +9,7 @@
                  [camel-snake-kebab "0.4.0"]
                  [cljsjs/react "16.4.0-0"]
                  [cljs-ajax "0.7.3"]
+                 [com.andrewmcveigh/cljs-time "0.5.2"]
                  [compojure "1.6.1"]
                  [com.cognitect/transit-clj "0.8.309"]
                  [com.cognitect/transit-cljs "0.8.256"]

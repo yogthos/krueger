@@ -3,7 +3,8 @@
     [cljsjs.semantic-ui-react :as ui]
     [re-frame.core :as rf]
     [kee-frame.core :as kf]
-    [krueger.common :refer [match-route]]))
+    [krueger.common :refer [match-route]]
+    [krueger.time :refer [ago]]))
 
 (rf/reg-sub
   ::posts
@@ -21,7 +22,11 @@
        [:span title])]
     [:a
      {:href (str "/post/" id)}
-     [:> ui/List.Description (str "by " author " | " timestamp " | " comment-count " comments")]]]])
+     [:> ui/List.Description (str "by " author
+                                  " | " (ago timestamp)
+                                  " | " (if (pos? comment-count)
+                                          (str comment-count " comments")
+                                          "no comments"))]]]])
 
 (defn home-page []
   [:> ui/Container
