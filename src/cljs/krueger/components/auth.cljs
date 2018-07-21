@@ -1,7 +1,7 @@
 (ns krueger.components.auth
   (:require
     [krueger.components.widgets :as widgets]
-    [krueger.input-events :refer [dispatch-on-enter]]
+    [krueger.input-events :refer [dispatch-on]]
     [cljsjs.semantic-ui-react :as ui]
     [re-frame.core :as rf]
     [kee-frame.core :as kf]))
@@ -37,7 +37,7 @@
             :error-event [::registration-error]}})
   (fn [{:keys [db]} [{:keys [user]}]]
     {:db (-> db
-             (dissoc ::registration)
+             (dissoc ::registration ::show-registration)
              (assoc :auth/user user))}))
 
 (defn registration-modal []
@@ -102,9 +102,9 @@
             :params      (::login db)
             :error-event [::login-error]}})
   (fn [{:keys [db]} [{:keys [user]}]]
+    (println "login success" user)
     {:db (-> db
-             (dissoc ::show-login
-                     ::login)
+             (dissoc ::show-login ::login)
              (assoc :auth/user user))}))
 
 (kf/reg-chain
@@ -130,7 +130,7 @@
       [:> ui/Form.Field
        [widgets/password-input {:label     "password"
                                 :path      [::login :pass]
-                                :on-key-up (dispatch-on-enter [:auth/handle-login])}]]]
+                                :on-key-up (dispatch-on :enter [:auth/handle-login])}]]]
      [widgets/error-notification ::login-error]]]
    [:> ui/Modal.Actions
     [:> ui/Button

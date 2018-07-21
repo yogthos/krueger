@@ -11,6 +11,7 @@
 
 (def router (reitit/router routes))
 
+;;TODO get rid of checking for hashes in URLs
 (defrecord ReititRouter [routes]
   api/Router
 
@@ -26,7 +27,7 @@
               (assoc :query-string query :hash fragment)))))
 
 (defn match-route [uri]
-  (->> (or (not-empty (string/replace uri #"^.*#" "")) "/")
+  (->> (or (not-empty uri) "/")
        (reitit/match-by-path router)))
 
 (defn hook-browser-navigation! []

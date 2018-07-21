@@ -2,7 +2,10 @@
   (:require
     [re-frame.core :as rf]))
 
-(defn dispatch-on-enter [dispatch-vector]
+(def events
+  {:enter 13})
+
+(defn dispatch-on [event dispatch-vector]
   (fn [e]
-    (when (= (.-keyCode e) 13)
-      (rf/dispatch (conj dispatch-vector e)))))
+    (when (= (.-keyCode e) (events event))
+      (rf/dispatch dispatch-vector))))
