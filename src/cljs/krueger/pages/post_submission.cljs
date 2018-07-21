@@ -3,6 +3,7 @@
     [cljsjs.semantic-ui-react :as ui]
     [re-frame.core :as rf]
     [kee-frame.core :as kf]
+    [krueger.common :refer [match-route]]
     [krueger.components.widgets :as widgets]))
 
 (kf/reg-chain
@@ -11,11 +12,12 @@
     {:db   (dissoc db ::post)
      :http {:method      :post
             :url         "/api/restricted/post"
-            :params      {:post (::post db)}
+            :params      {:post (update (::post db) :tags not-empty)}
             :error-event [::post-error]}})
   (fn [{:keys [db]} [{:keys [id]}]]
     {:db       (-> db (dissoc ::post))
-     :dispatch [:nav/by-route-path id]}))
+     ;;todo figure out for dynamic routes (kf/path-for [:post])
+     :dispatch [:nav/by-route-path (str "/post/" id)]}))
 
 (rf/reg-event-db
   ::post-error
@@ -69,5 +71,5 @@
 
 (kf/reg-controller
   ::post-submission-controller
-  {:params (fn [route] (or (= (-> route :data :name) :submit-post) nil))
+  {:params (fn [route] (match-route route :submit-post))
    :start  (fn [_] [::init-submit-post-page])})

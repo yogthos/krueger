@@ -2,7 +2,8 @@
   (:require
     [cljsjs.semantic-ui-react :as ui]
     [re-frame.core :as rf]
-    [kee-frame.core :as kf]))
+    [kee-frame.core :as kf]
+    [krueger.common :refer [match-route]]))
 
 (rf/reg-sub
   ::posts
@@ -43,5 +44,5 @@
 
 (kf/reg-controller
   ::home-controller
-  {:params (fn [route] (-> route :path-params))
+  {:params (fn [route] (match-route route :home))
    :start  [::fetch-posts]})

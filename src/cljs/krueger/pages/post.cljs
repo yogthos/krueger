@@ -2,7 +2,14 @@
   (:require
     [cljsjs.semantic-ui-react :as ui]
     [re-frame.core :as rf]
-    [kee-frame.core :as kf]))
+    [kee-frame.core :as kf]
+    [krueger.common :refer [match-route]]
+    [krueger.components.widgets :refer [spinner]]))
+
+(rf/reg-sub
+  ::post
+  (fn [db _]
+    (::post db)))
 
 (rf/reg-sub
   ::comments
@@ -17,11 +24,12 @@
   (fn [db [_ text]]
     (assoc db ::comment-text text)))
 
+;;todo disable submit button while posting
 (rf/reg-event-fx
   ::submit-comment
   (fn [{db :db} _]
-    #_{:http {:params (::comment-text db)
-            :success-event [::set-comment-text nil]}}))
+    #_{:http {:params        (::comment-text db)
+              :success-event [::set-comment-text nil]}}))
 
 (rf/reg-sub
   ::comment-text
@@ -37,7 +45,7 @@
       :value       @(rf/subscribe [::comment-text])}]]
    [:> ui/Form.Field
     [:> ui/Button
-     {:primary true
+     {:primary  true
       :on-click #(rf/dispatch [::submit-comment])}
      "submit"]]])
 
@@ -47,27 +55,34 @@
      ^{:key comment-data}
      [post-comment comment-data])])
 
+;;todo display author id instead of the email
+(defn post-content []
+  (if-let [{:keys [tags title author url text timestamp]} @(rf/subscribe [::post])]
+    [:div
+     [:h3 (if url [:a {:href url} title] title)]
+     (when text [:p text])
+     [:p "submitted by " author " at " (str timestamp)]]
+    spinner))
+
 (defn post-page []
   [:> ui/Container
    {:fluid true}
-   [:p "post content"]
+   [post-content]
    [:p @(rf/subscribe [::comment-text])]
    [submit-form]
    [comments-list]])
 
 (kf/reg-chain
   ::fetch-post
-  (fn [{db :db} _]
-    {:db (assoc db ::comments [{:id 1 :text "some comment"}])}
-    #_{:http {:method      :get
-              :url         "/api/page"
-              :params      {:category :all
-                            :offset   0}
-              :error-event [:common/set-error]}})
-  #_(fn [{:keys [db]} [_ posts]]
-      {:db (assoc db ::posts posts)}))
+  (fn [_ [post-id]]
+    {:http {:method      :get
+            :url         (str "/api/post/" post-id)
+            :error-event [:common/set-error]}})
+  (fn [{:keys [db]} [_ post]]
+    {:db (assoc db ::post post)}))
 
 (kf/reg-controller
   ::post-controller
-  {:params (fn [route] (-> route :path-params))
+  {:params (fn [route] (when (match-route route :post)
+                         (-> route :path-params :id)))
    :start  (fn [_ post-id] [::fetch-post post-id])})

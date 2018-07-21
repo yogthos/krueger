@@ -2,7 +2,8 @@
   (:require
     [cljsjs.semantic-ui-react :as ui]
     [re-frame.core :as rf]
-    [kee-frame.core :as kf]))
+    [kee-frame.core :as kf]
+    [krueger.common :refer [match-route]]))
 
 (rf/reg-sub
   ::profile
@@ -29,7 +30,7 @@
 
 (kf/reg-controller
   ::profile-controller
-  {:params (fn [route] (-> route :path-params))
+  {:params (fn [route] (match-route route :profile))
    :start  (fn [_] [::fetch-profile])})
 
 

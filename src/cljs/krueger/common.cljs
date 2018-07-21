@@ -30,3 +30,6 @@
         :color   "red"
         :onClick #(rf/dispatch [:common/set-error nil])}
        "OK"]]]))
+
+(defn match-route [route route-name]
+  (or (= (-> route :data :name) route-name) nil))

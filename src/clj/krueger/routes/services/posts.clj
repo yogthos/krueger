@@ -4,7 +4,9 @@
   (:import java.util.Date))
 
 (s/defschema Tag
-  {:id s/Num :label String})
+  {:id          s/Num
+   :label       String
+   :description String})
 
 (s/defschema Comment
   {:id                      s/Num

@@ -46,3 +46,9 @@
   (when-let [error @(rf/subscribe [error-path])]
     [:> ui/Message {:negative true}
      [:> ui/Message.Header (str error)]]))
+
+(def spinner
+  (into [:div.sk-circle]
+        (map (fn [n] [(keyword (str ":div.sk-circle" n "..sk-child"))])
+             (range 1 13))))
+
