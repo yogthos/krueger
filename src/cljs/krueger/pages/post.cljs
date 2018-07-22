@@ -4,7 +4,9 @@
     [re-frame.core :as rf]
     [kee-frame.core :as kf]
     [krueger.common :refer [match-route]]
-    [krueger.components.widgets :refer [spinner]]))
+    [krueger.components.widgets :refer [spinner]]
+    [krueger.terminology :refer [term]]
+    [krueger.time :refer [ago]]))
 
 (rf/reg-sub
   ::post
@@ -40,14 +42,14 @@
   [:> ui/Form
    [:> ui/Form.Field
     [:textarea
-     {:placeholder "leave a comment"
+     {:placeholder (term :post/comment)
       :on-change   #(rf/dispatch [::set-comment-text (-> % .-target .-value)])
       :value       @(rf/subscribe [::comment-text])}]]
    [:> ui/Form.Field
     [:> ui/Button
      {:primary  true
       :on-click #(rf/dispatch [::submit-comment])}
-     "submit"]]])
+     (term :submit)]]])
 
 (defn comments-list []
   [:> ui/List
@@ -63,7 +65,10 @@
         ^{:key id}
         [:> ui/Label @(rf/subscribe [:tag/label id])])]
      (when text [:p text])
-     [:p "submitted by " author " at " (str timestamp)]]
+     [:p (term :post/submitted-by)
+      " " author
+      " " (ago timestamp)
+      " " (term :post/ago)]]
     [spinner]))
 
 (defn post-page []

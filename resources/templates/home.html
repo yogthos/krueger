@@ -20,6 +20,7 @@
     <script type="text/javascript">
         var csrfToken = "{{csrf-token}}";
         var user = {{user|json|safe}};
+        var locale = {{locale|json|safe}};
     </script>
     {% script "/js/app.js" %}
   </body>

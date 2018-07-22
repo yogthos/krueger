@@ -4,7 +4,8 @@
     [re-frame.core :as rf]
     [kee-frame.core :as kf]
     [krueger.common :refer [match-route]]
-    [krueger.components.widgets :as widgets]))
+    [krueger.components.widgets :as widgets]
+    [krueger.terminology :refer [term]]))
 
 (kf/reg-chain
   ::submit-post
@@ -34,17 +35,17 @@
    {:centered true}
    [:> ui/Grid.Column
     {:width 10}
-    [:h2 "Submit a story"]
+    [:h2 (term :post/submit)]
     [:> ui/Form
      [:> ui/Form.Field
-      [widgets/text-input {:label "URL:" :path [::post :url]}]]
+      [widgets/text-input {:label (term :post/url) :path [::post :url]}]]
      [:> ui/Form.Field
-      [widgets/text-input {:label "Title:" :path [::post :title]}]]
+      [widgets/text-input {:label (term :post/title) :path [::post :title]}]]
      ;;todo searchable typeahead tags should have lable, description, id (number)
      [:> ui/Form.Field
-      [widgets/text-input {:label "Tags:" :path [::post :tags]}]]
+      [widgets/text-input {:label (term :post/tags) :path [::post :tags]}]]
      [:> ui/Form.Field
-      [widgets/textarea {:label "Text:" :path [::post :text]}]]
+      [widgets/textarea {:label (term :post/text) :path [::post :text]}]]
      [widgets/error-notification ::post-error]
      [:div
       [:> ui/Button
@@ -53,17 +54,16 @@
         :floated "left"
         ;;todo
         :onClick #(rf/dispatch [:nav/back])}
-       "cancel"]
+       (term :cancel)]
       [:> ui/Button
        {:primary  true
         :floated  "right"
         :on-click #(rf/dispatch [::submit-post])}
-       "submit"]]]]])
+       (term :submit)]]]]])
 
 (rf/reg-event-fx
   ::init-submit-post-page
   (fn [{:keys [db]} _]
-    (println "loading submission page" (:auth/user db))
     (merge
       {:db (dissoc db ::post)}
       (when-not (:auth/user db)

@@ -16,7 +16,7 @@
     [krueger.pages.post-submission :refer [submit-post-page]]
     [krueger.pages.profile :refer [profile-page]]
     [krueger.routing :as routing]
-    [krueger.components.tags]))
+    [krueger.terminology]))
 
 (defn root-component []
   [:div

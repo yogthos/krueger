@@ -47,7 +47,8 @@
                  [cljsjs/semantic-ui-react "0.81.1-0"]
                  [cljsjs/react-dom "16.4.0-0"]
                  [com.taoensso/sente "1.12.0"]
-                 [clojure.java-time "0.3.2"]]
+                 [clojure.java-time "0.3.2"]
+                 [tongue "0.2.4"]]
 
   :min-lein-version "2.0.0"
 

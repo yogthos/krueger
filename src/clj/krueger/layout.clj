@@ -1,5 +1,6 @@
 (ns krueger.layout
   (:require
+    [krueger.config :refer [env]]
     [selmer.parser :as parser]
     [ring.util.http-response :refer [content-type ok]]
     [ring.util.anti-forgery :refer [anti-forgery-field]]
@@ -20,6 +21,7 @@
         (assoc params
           :user *identity*
           :page template
+          :localse (:locale env)
           :csrf-token *anti-forgery-token*)))
     "text/html; charset=utf-8"))
 

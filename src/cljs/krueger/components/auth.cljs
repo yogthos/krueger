@@ -2,6 +2,7 @@
   (:require
     [krueger.components.widgets :as widgets]
     [krueger.input-events :refer [dispatch-on]]
+    [krueger.terminology :refer [term]]
     [cljsjs.semantic-ui-react :as ui]
     [re-frame.core :as rf]
     [kee-frame.core :as kf]))
@@ -43,32 +44,40 @@
 (defn registration-modal []
   [:> ui/Modal
    {:close-on-dimmer-click false
-    :open               @(rf/subscribe [::show-registration])
-    :size               "tiny"}
-   [:> ui/Modal.Header "User Registration"]
+    :open                  @(rf/subscribe [::show-registration])
+    :size                  "tiny"}
+   [:> ui/Modal.Header (term :registration/header)]
    [:> ui/Modal.Content
     [:> ui/Modal.Description
      [:> ui/Form
       [:> ui/Form.Field
-       [widgets/password-input {:label "user name" :path [::registration :screenname]}]]
+       [widgets/password-input
+        {:label (term :registration/name)
+         :path  [::registration :screenname]}]]
       [:> ui/Form.Field
-       [widgets/email-input {:label "email" :path [::registration :email]}]]
+       [widgets/email-input
+        {:label (term :registration/email)
+         :path  [::registration :email]}]]
       [:> ui/Form.Field
-       [widgets/password-input {:label "password" :path [::registration :pass]}]]
+       [widgets/password-input
+        {:label (term :registration/password)
+         :path  [::registration :pass]}]]
       [:> ui/Form.Field
-       [widgets/password-input {:label "confirm password" :path [::registration :pass-confirm]}]]]
+       [widgets/password-input
+        {:label (term :registration/confirm-password)
+         :path  [::registration :pass-confirm]}]]]
      [widgets/error-notification ::registration-error]]]
    [:> ui/Modal.Actions
     [:> ui/Button
-     {:basic   true
-      :color   "red"
-      :floated "left"
+     {:basic    true
+      :color    "red"
+      :floated  "left"
       :on-click #(rf/dispatch [:auth/show-registration-modal false])}
-     "cancel"]
+     (term :cancel)]
     [:> ui/Button
-     {:primary true
+     {:primary  true
       :on-click #(rf/dispatch [:auth/handle-registration false])}
-     "register"]]])
+     (term :registration/register)]]])
 
 (rf/reg-event-fx
   :auth/close-login-modal
@@ -102,7 +111,6 @@
             :params      (::login db)
             :error-event [::login-error]}})
   (fn [{:keys [db]} [{:keys [user]}]]
-    (println "login success" user)
     {:db (-> db
              (dissoc ::show-login ::login)
              (assoc :auth/user user))}))
@@ -119,27 +127,30 @@
 (defn login-modal []
   [:> ui/Modal
    {:close-on-dimmer-click false
-    :open               @(rf/subscribe [::show-login])
-    :size               "tiny"}
-   [:> ui/Modal.Header "User Login"]
+    :open                  @(rf/subscribe [::show-login])
+    :size                  "tiny"}
+   [:> ui/Modal.Header (term :login/header)]
    [:> ui/Modal.Content
     [:> ui/Modal.Description
      [:> ui/Form
       [:> ui/Form.Field
-       [widgets/email-input {:label "email" :path [::login :email]}]]
+       [widgets/email-input
+        {:label (term :login/email)
+         :path  [::login :email]}]]
       [:> ui/Form.Field
-       [widgets/password-input {:label     "password"
-                                :path      [::login :pass]
-                                :on-key-up (dispatch-on :enter [:auth/handle-login])}]]]
+       [widgets/password-input
+        {:label     (term :login/password)
+         :path      [::login :pass]
+         :on-key-up (dispatch-on :enter [:auth/handle-login])}]]]
      [widgets/error-notification ::login-error]]]
    [:> ui/Modal.Actions
     [:> ui/Button
-     {:basic   true
-      :color   "red"
-      :floated "left"
+     {:basic    true
+      :color    "red"
+      :floated  "left"
       :on-click #(rf/dispatch [:auth/close-login-modal false])}
-     "cancel"]
+     (term :cancel)]
     [:> ui/Button
-     {:primary true
+     {:primary  true
       :on-click #(rf/dispatch [:auth/handle-login])}
-     "login"]]])
+     (term :login/login)]]])

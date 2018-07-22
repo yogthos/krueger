@@ -6,6 +6,7 @@
     [krueger.routes.services.auth :as auth]
     [krueger.routes.services.common :as common]
     [krueger.routes.services.posts :as posts]
+    [krueger.routes.services.terminology :as terminology]
     [muuntaja.middleware :as muuntaja]
     [reitit.ring.coercion :as rrc]
     [reitit.coercion.schema :as schema]
@@ -69,12 +70,12 @@
       :handler    (fn [{{params :body} :parameters :as req}]
                     (ok {:result (auth/register! params req)}))}}]
 
-   ["/tags"
+   ["/terminology"
     {:get
-     {:summary "fetch aall tags"
-      :responses  {200 {:body {:tags [posts/Tag]}}}
+     {:summary "fetch terminology"
+      :responses  {200 {:body {:terminology terminology/Terminology}}}
       :handler (fn [_]
-                 (ok {:tags (posts-db/tags)}))}}]
+                 (ok {:terminology (terminology/terminology)}))}}]
 
    ["/page"
     {:get

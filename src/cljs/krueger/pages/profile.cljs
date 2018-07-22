@@ -3,7 +3,8 @@
     [cljsjs.semantic-ui-react :as ui]
     [re-frame.core :as rf]
     [kee-frame.core :as kf]
-    [krueger.common :refer [match-route]]))
+    [krueger.common :refer [match-route]]
+    [krueger.terminology :refer [term]]))
 
 (rf/reg-sub
   ::profile
@@ -13,7 +14,7 @@
 (defn profile-page []
   [:> ui/Container
    {:fluid true}
-   [:p "profile"]
+   [:p (term :profile/title)]
    [:p @(rf/subscribe [::profile])]])
 
 (kf/reg-chain

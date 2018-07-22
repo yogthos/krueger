@@ -1,0 +1,29 @@
+{:en
+ {:submit       "submit"
+  :cancel       "cancel"
+  :registration {:header           "User Registration"
+                 :name             "user name"
+                 :email            "email"
+                 :password         "password"
+                 :confirm-password "confirm password"
+                 :register         "register"}
+  :login        {:header   "Login"
+                 :email    "email"
+                 :password "password"
+                 :login    "login"}
+  :nav          {:home     "Home"
+                 :login    "Login"
+                 :logout   "Logout"
+                 :register "Register"}
+  :post         {:by           "by"
+                 :comment      "leave a comment"
+                 :comments     "comments"
+                 :no-comments  "no comments"
+                 :submitted-by "submitted by"
+                 :ago          "ago"
+                 :submit       "Submit a story"
+                 :url          "URL:"
+                 :title        "Title:"
+                 :tags         "Tags:"
+                 :text         "Text:"}
+  :profile {:title "Profile"}}}
