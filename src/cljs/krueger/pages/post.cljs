@@ -55,14 +55,16 @@
      ^{:key comment-data}
      [post-comment comment-data])])
 
-;;todo display author id instead of the email
 (defn post-content []
   (if-let [{:keys [tags title author url text timestamp]} @(rf/subscribe [::post])]
     [:div
-     [:h3 (if url [:a {:href url} title] title)]
+     [:h3 (if url [:a {:href url} title] title)
+      (for [id tags]
+        ^{:key id}
+        [:> ui/Label @(rf/subscribe [:tag/label id])])]
      (when text [:p text])
      [:p "submitted by " author " at " (str timestamp)]]
-    spinner))
+    [spinner]))
 
 (defn post-page []
   [:> ui/Container

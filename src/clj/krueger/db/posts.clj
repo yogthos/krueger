@@ -43,23 +43,24 @@
         (update :tags #(when % (tags-by-ids {:ids %})))
         (assoc :comments (get-comments {:post id})))))
 
-(defn upvote-post! [email slug]
-  (let [postid (decode-64 slug)]
-    (jdbc/with-db-transaction [t-conn *db*]
-                              (when-not (upvoted? t-conn {:email email :postid postid})
-                                (upvote! t-conn {:id postid})
-                                (set-votes! t-conn {:upvoted true :downvoted false :email email :postid postid})))))
+(defn upvote-comment! [email id]
+  (jdbc/with-db-transaction [t-conn *db*]
+    (when-not (upvoted? t-conn {:email email :id id})
+      (upvote! t-conn {:id id})
+      (set-votes! t-conn {:upvoted   true
+                          :downvoted false
+                          :email     email
+                          :id        id}))))
 
-(defn downvote-post! [email slug]
-  (let [postid (decode-64 slug)]
-    (jdbc/with-db-transaction [t-conn *db*]
-                              (when-not (upvoted? t-conn {:email email :postid postid})
-                                (downvote! t-conn {:id postid})
-                                (set-votes! t-conn
-                                            {:upvoted   false
-                                             :downvoted true
-                                             :email     email
-                                             :postid    postid})))))
+(defn downvote-comment! [email id]
+  (jdbc/with-db-transaction [t-conn *db*]
+    (when-not (upvoted? t-conn {:email email :postid id})
+      (downvote! t-conn {:id id})
+      (set-votes! t-conn
+                  {:upvoted   false
+                   :downvoted true
+                   :email     email
+                   :id        id}))))
 
 (defn add-post-comment! [comment]
   (-> (merge {:parent nil} comment)

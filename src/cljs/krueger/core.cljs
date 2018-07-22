@@ -15,7 +15,8 @@
     [krueger.pages.post :refer [post-page]]
     [krueger.pages.post-submission :refer [submit-post-page]]
     [krueger.pages.profile :refer [profile-page]]
-    [krueger.routing :as routing]))
+    [krueger.routing :as routing]
+    [krueger.components.tags]))
 
 (defn root-component []
   [:div
@@ -33,8 +34,7 @@
     nil nil]])
 
 (defn init! []
-  (kf/start! {:debug?         true
-              :router         (routing/->ReititRouter routing/router)
+  (kf/start! {:router         (routing/->ReititRouter routing/router)
               :chain-links    effects/chain-links
               :initial-db     {:auth/user (js->clj js/user :keywordize-keys true)}
               :root-component [root-component]})

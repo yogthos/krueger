@@ -47,8 +47,17 @@
     [:> ui/Message {:negative true}
      [:> ui/Message.Header (str error)]]))
 
-(def spinner
-  (into [:div.sk-circle]
-        (map (fn [n] [(keyword (str ":div.sk-circle" n "..sk-child"))])
-             (range 1 13))))
-
+(defn spinner []
+  [:div.sk-circle
+   [:div.sk-circle1.sk-child]
+   [:div.sk-circle2.sk-child]
+   [:div.sk-circle3.sk-child]
+   [:div.sk-circle4.sk-child]
+   [:div.sk-circle5.sk-child]
+   [:div.sk-circle6.sk-child]
+   [:div.sk-circle7.sk-child]
+   [:div.sk-circle8.sk-child]
+   [:div.sk-circle9.sk-child]
+   [:div.sk-circle10.sk-child]
+   [:div.sk-circle11.sk-child]
+   [:div.sk-circle12.sk-child]])

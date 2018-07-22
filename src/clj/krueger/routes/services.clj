@@ -69,6 +69,13 @@
       :handler    (fn [{{params :body} :parameters :as req}]
                     (ok {:result (auth/register! params req)}))}}]
 
+   ["/tags"
+    {:get
+     {:summary "fetch aall tags"
+      :responses  {200 {:body {:tags [posts/Tag]}}}
+      :handler (fn [_]
+                 (ok {:tags (posts-db/tags)}))}}]
+
    ["/page"
     {:get
      {:summary    "return posts with the given page offset"
@@ -110,6 +117,7 @@
                            :active                        s/Bool}}
        :handler    (fn [{{params :body} :parameters}]
                      (auth/update-user! params))}}]
+
     ["/tag"
      {:post
       {:summary "create a new tag"
@@ -135,24 +143,25 @@
        :responses  {200 {:body posts/SubmissionResult}}
        :handler    (fn [{{{:keys [post]} :body} :parameters :as req}]
                      (ok (posts-db/save-post! (assoc post :author (common/user-id req)))))}}]
-    ;;todo switch to Mastodon style boosts instread of upvotes
-    ["/up-vote-post"
+    ;;todo: add Mastodon style boosts for posts
+
+    ["/up-vote-comment"
      {:post
-      {:summary    "up-vote the post with the given id"
+      {:summary    "up-vote the comment with the given id"
        :parameters {:body {:id s/Str}}
        :responses  {200 {:body common/Success}}
        :handler    (fn [{{{:keys [id]} :body} :parameters :as req}]
                      (do
-                       (posts-db/upvote-post! (common/user-id req) id)
+                       (posts-db/upvote-comment! (common/user-id req) id)
                        (ok {:result :ok})))}}]
-    ["/down-vote-post"
+    ["/down-vote-comment"
      {:post
       {:summary    "down-vote the post with the given id"
        :parameters {:body {:id s/Str}}
        :responses  {200 {:body common/Success}}
        :handler    (fn [{{{:keys [id]} :body} :parameters :as req}]
                      (do
-                       (posts-db/downvote-post! (common/user-id req) id)
+                       (posts-db/downvote-comment! (common/user-id req) id)
                        (ok {:result :ok})))}}]
     ["/comment"
      {:post
