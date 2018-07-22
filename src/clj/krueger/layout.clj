@@ -21,7 +21,7 @@
         (assoc params
           :user *identity*
           :page template
-          :localse (:locale env)
+          :locale (:locale env)
           :csrf-token *anti-forgery-token*)))
     "text/html; charset=utf-8"))
 
