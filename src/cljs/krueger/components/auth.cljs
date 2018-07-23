@@ -34,6 +34,7 @@
     {:db   (dissoc db ::registration-error)
      :http {:method      :post
             :url         "/api/register"
+            :resource-id :register
             :params      (::registration db)
             :error-event [::registration-error]}})
   (fn [{:keys [db]} [{:keys [user]}]]
@@ -74,9 +75,10 @@
       :floated  "left"
       :on-click #(rf/dispatch [:auth/show-registration-modal false])}
      (term :cancel)]
-    [:> ui/Button
-     {:primary  true
-      :on-click #(rf/dispatch [:auth/handle-registration false])}
+    [widgets/ajax-button
+     {:primary     true
+      :resource-id :register
+      :on-click    #(rf/dispatch [:auth/handle-registration false])}
      (term :registration/register)]]])
 
 (rf/reg-event-fx
@@ -109,6 +111,7 @@
      :http {:method      :post
             :url         "/api/login"
             :params      (::login db)
+            :resource-id :login
             :error-event [::login-error]}})
   (fn [{:keys [db]} [{:keys [user]}]]
     {:db (-> db
@@ -150,7 +153,8 @@
       :floated  "left"
       :on-click #(rf/dispatch [:auth/close-login-modal false])}
      (term :cancel)]
-    [:> ui/Button
-     {:primary  true
-      :on-click #(rf/dispatch [:auth/handle-login])}
+    [widgets/ajax-button
+     {:primary     true
+      :resource-id :login
+      :on-click    #(rf/dispatch [:auth/handle-login])}
      (term :login/login)]]])

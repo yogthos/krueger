@@ -14,6 +14,7 @@
      :http {:method      :post
             :url         "/api/restricted/post"
             :params      {:post (update (::post db) :tags not-empty)}
+            :resource-id :submit-post
             :error-event [::post-error]}})
   (fn [{:keys [db]} [{:keys [id]}]]
     {:db       (-> db (dissoc ::post))
@@ -52,13 +53,13 @@
        {:basic   true
         :color   "red"
         :floated "left"
-        ;;todo
         :onClick #(rf/dispatch [:nav/back])}
        (term :cancel)]
-      [:> ui/Button
-       {:primary  true
-        :floated  "right"
-        :on-click #(rf/dispatch [::submit-post])}
+      [widgets/ajax-button
+       {:primary     true
+        :floated     "right"
+        :resource-id :submit-post
+        :on-click    #(rf/dispatch [::submit-post])}
        (term :submit)]]]]])
 
 (rf/reg-event-fx

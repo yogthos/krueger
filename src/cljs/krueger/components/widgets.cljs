@@ -47,6 +47,13 @@
     [:> ui/Message {:negative true}
      [:> ui/Message.Header (str error)]]))
 
+(defn ajax-button [opts label]
+  [:> ui/Button
+   (-> opts
+       (assoc :disabled @(rf/subscribe [:http/loading? (:resource-id opts)]))
+       (dissoc :resource-id))
+   label])
+
 (defn spinner []
   [:div.sk-circle
    [:div.sk-circle1.sk-child]

@@ -7,7 +7,6 @@
     [krueger.common :as common]
     [krueger.components.auth :as auth]
     [krueger.components.navbar :refer [navbar]]
-    [krueger.effects :as effects]
     #_[krueger.feeds :as feeds]
     [krueger.pages.comments :refer [comments-page]]
     [krueger.pages.home :refer [home-page]]
@@ -35,7 +34,7 @@
 
 (defn init! []
   (kf/start! {:router         (routing/->ReititRouter routing/router)
-              :chain-links    effects/chain-links
+              :chain-links    common/chain-links
               :initial-db     {:auth/user (js->clj js/user :keywordize-keys true)}
               :root-component [root-component]})
   (load-interceptors!)

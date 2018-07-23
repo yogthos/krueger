@@ -6,7 +6,8 @@
     [krueger.common :refer [match-route]]
     [krueger.components.widgets :refer [spinner]]
     [krueger.terminology :refer [term]]
-    [krueger.time :refer [ago]]))
+    [krueger.time :refer [ago]]
+    [krueger.components.widgets :as widgets]))
 
 (rf/reg-sub
   ::post
@@ -26,12 +27,15 @@
   (fn [db [_ text]]
     (assoc db ::comment-text text)))
 
-;;todo disable submit button while posting
-(rf/reg-event-fx
+(kf/reg-chain
   ::submit-comment
   (fn [{db :db} _]
-    #_{:http {:params        (::comment-text db)
-              :success-event [::set-comment-text nil]}}))
+    {:http {:method        :post
+            :url           "/api/restricted/comment"
+            :resource-id   :submit-comment
+            :params        (::comment-text db)
+            :success-event [::set-comment-text nil]}})
+  (fn [{db :db} [_ result]]))
 
 (rf/reg-sub
   ::comment-text
@@ -46,9 +50,10 @@
       :on-change   #(rf/dispatch [::set-comment-text (-> % .-target .-value)])
       :value       @(rf/subscribe [::comment-text])}]]
    [:> ui/Form.Field
-    [:> ui/Button
-     {:primary  true
-      :on-click #(rf/dispatch [::submit-comment])}
+    [widgets/ajax-button
+     {:primary     true
+      :resource-id :submit-comment
+      :on-click    #(rf/dispatch [::submit-comment])}
      (term :submit)]]])
 
 (defn comments-list []
