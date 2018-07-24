@@ -28,8 +28,11 @@
 
 (rf/reg-event-db
   ::stop-edit
-  (fn [db [_ k]]
-    (update db :edit/comment dissoc k)))
+  (fn [db [_ k {:keys [id]}]]
+    (let [comment (get-in db [:edit/comment k])]
+      (-> db
+          (update-in [::post :comments] (fnil conj []) (assoc comment :id id))
+          (update :edit/comment dissoc k)))))
 
 (kf/reg-event-fx
   ::submit-comment
@@ -84,8 +87,8 @@
       [:> ui/List.Content
        [comment-content post-id comment-data]]])])
 
-(defn post-content []
-  (if-let [{:keys [tags title author url text timestamp]} @(rf/subscribe [::post])]
+(defn post-content [post]
+  (if-let [{:keys [tags title author url text timestamp]} post]
     [:div
      [:h3 (if url [:a {:href url} title] title)
       (for [id tags]
@@ -99,11 +102,12 @@
     [spinner]))
 
 (defn post-page []
-  [:> ui/Container
-   {:fluid true}
-   [post-content]
-   [submit-form (:id @(rf/subscribe [::post])) nil]
-   [comments-list]])
+  (when-let [post @(rf/subscribe [::post])]
+    [:> ui/Container
+     {:fluid true}
+     [post-content post]
+     [submit-form (:id post) nil]
+     [comments-list (:id post)]]))
 
 (kf/reg-chain
   ::fetch-post
