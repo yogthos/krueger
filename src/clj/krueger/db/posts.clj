@@ -31,8 +31,6 @@
     (merge {:text      nil
             :url       nil
             :preview   nil
-            :upvotes   0
-            :downvotes 0
             :tags      nil}
            post)))
 

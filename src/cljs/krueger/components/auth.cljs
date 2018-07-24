@@ -82,7 +82,7 @@
      (term :registration/register)]]])
 
 (rf/reg-event-fx
-  :auth/close-login-modal
+  :auth/login-modal-shown
   (fn [{db :db} [_ show?]]
     (merge
       {:db (assoc db ::show-login show?)}
@@ -151,7 +151,7 @@
      {:basic    true
       :color    "red"
       :floated  "left"
-      :on-click #(rf/dispatch [:auth/close-login-modal false])}
+      :on-click #(rf/dispatch [:auth/login-modal-shown false])}
      (term :cancel)]
     [widgets/ajax-button
      {:primary     true

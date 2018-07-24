@@ -7,7 +7,8 @@
     [krueger.components.widgets :refer [spinner]]
     [krueger.terminology :refer [term]]
     [krueger.time :refer [ago]]
-    [krueger.components.widgets :as widgets]))
+    [krueger.components.widgets :as widgets]
+    [reagent.core :as r]))
 
 (rf/reg-sub
   ::post
@@ -16,51 +17,72 @@
 
 (rf/reg-sub
   ::comments
-  (fn [db _]
-    (::comments db)))
-
-(defn post-comment [{:keys [id text]}]
-  [:> ui/List.Item [:> ui/List.Content [:p.comment text]]])
+  :<- [::post]
+  (fn [post _]
+    (:comments post)))
 
 (rf/reg-event-db
-  ::set-comment-text
-  (fn [db [_ text]]
-    (assoc db ::comment-text text)))
+  ::add-edit
+  (fn [db [_ {:keys [post parent] :as comment}]]
+    (update db :edit/comment assoc [post parent] comment)))
 
-(kf/reg-chain
+(rf/reg-event-db
+  ::stop-edit
+  (fn [db [_ k]]
+    (update db :edit/comment dissoc k)))
+
+(kf/reg-event-fx
   ::submit-comment
-  (fn [{db :db} _]
+  (fn [{db :db} [k]]
     {:http {:method        :post
             :url           "/api/restricted/comment"
             :resource-id   :submit-comment
-            :params        (::comment-text db)
-            :success-event [::set-comment-text nil]}})
-  (fn [{db :db} [_ result]]))
+            :params        {:comment (get-in db [:edit/comment k])}
+            :success-event [::stop-edit k]}}))
 
-(rf/reg-sub
-  ::comment-text
-  (fn [db _]
-    (::comment-text db)))
+(defn submit-action [post-id parent-comment-id]
+  (if @(rf/subscribe [:auth/user])
+    (rf/dispatch [::submit-comment [post-id parent-comment-id]])
+    (rf/dispatch [:auth/login-modal-shown true])))
 
-(defn submit-form []
+(defn submit-form [post-id parent-comment-id]
   [:> ui/Form
    [:> ui/Form.Field
     [:textarea
      {:placeholder (term :post/comment)
-      :on-change   #(rf/dispatch [::set-comment-text (-> % .-target .-value)])
-      :value       @(rf/subscribe [::comment-text])}]]
+      :on-blur     #(rf/dispatch [::add-edit
+                                  {:post    post-id
+                                   :parent  parent-comment-id
+                                   :content (-> % .-target .-value)}])}]]
    [:> ui/Form.Field
     [widgets/ajax-button
      {:primary     true
       :resource-id :submit-comment
-      :on-click    #(rf/dispatch [::submit-comment])}
+      :on-click    #(submit-action post-id parent-comment-id)}
      (term :submit)]]])
 
-(defn comments-list []
+(defn comment-reply [post-id comment-id]
+  (r/with-let [expanded? (r/atom false)]
+    (if @expanded?
+      [submit-form post-id comment-id]
+      [:> ui/Button
+       {:primary  true
+        :on-click #(reset! expanded? true)}
+       (term :post/comment)])))
+
+(defn comment-content [post-id {:keys [id content]}]
+  [:div.comment
+   [:p content]
+   (when @(rf/subscribe [:auth/user])
+     [comment-reply post-id id])])
+
+(defn comments-list [post-id]
   [:> ui/List
    (for [comment-data @(rf/subscribe [::comments])]
      ^{:key comment-data}
-     [post-comment comment-data])])
+     [:> ui/List.Item
+      [:> ui/List.Content
+       [comment-content post-id comment-data]]])])
 
 (defn post-content []
   (if-let [{:keys [tags title author url text timestamp]} @(rf/subscribe [::post])]
@@ -80,8 +102,7 @@
   [:> ui/Container
    {:fluid true}
    [post-content]
-   [:p @(rf/subscribe [::comment-text])]
-   [submit-form]
+   [submit-form (:id @(rf/subscribe [::post])) nil]
    [comments-list]])
 
 (kf/reg-chain

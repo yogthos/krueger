@@ -14,12 +14,12 @@
    :author                  String
    :content                 String
    :timestamp               Date
-   :upvotes                 s/Num
-   :downvotes               s/Num})
+   :upvotes                 (s/maybe s/Num)
+   :downvotes               (s/maybe s/Num)})
 
 (s/defschema CommentSubmission
   {:post                    String
-   (s/optional-key :parent) s/Num
+   (s/optional-key :parent) (s/maybe s/Num)
    :content                 String})
 
 (s/defschema SubmissionResult
@@ -34,8 +34,6 @@
                    (s/optional-key :preview) (s/maybe String)
                    (s/optional-key :url)     (s/maybe String)
                    (s/optional-key :text)    (s/maybe String)
-                   :upvotes                  s/Num
-                   :downvotes                s/Num
                    :timestamp                Date
                    :comments                 [Comment]})
 

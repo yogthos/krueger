@@ -68,7 +68,7 @@
     (merge
       {:db (dissoc db ::post)}
       (when-not (:auth/user db)
-        {:dispatch [:auth/close-login-modal true]}))))
+        {:dispatch [:auth/login-modal-shown true]}))))
 
 (kf/reg-controller
   ::post-submission-controller

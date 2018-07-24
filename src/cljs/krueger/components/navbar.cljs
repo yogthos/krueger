@@ -30,5 +30,5 @@
       [nav-link :profile [:span username]]
       [nav-action (term :nav/logout) [:auth/handle-logout]]]
      [:> ui/Menu.Menu {:position "right"}
-      [nav-action (term :nav/login) [:auth/close-login-modal true]]
+      [nav-action (term :nav/login) [:auth/login-modal-shown true]]
       [nav-action (term :nav/register) [:auth/show-registration-modal true]]])])

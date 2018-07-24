@@ -143,7 +143,9 @@
        :parameters {:body {:post posts/PostSubmission}}
        :responses  {200 {:body posts/SubmissionResult}}
        :handler    (fn [{{{:keys [post]} :body} :parameters :as req}]
-                     (ok (posts-db/save-post! (assoc post :author (common/user-id req)))))}}]
+                     (-> (assoc post :author (common/user-id req))
+                         (posts-db/save-post!)
+                         (ok)))}}]
     ;;todo: add Mastodon style boosts for posts
 
     ["/up-vote-comment"
@@ -170,7 +172,9 @@
        :parameters {:body {:comment posts/CommentSubmission}}
        :responses  {200 {:body posts/SubmissionResult}}
        :handler    (fn [{{{:keys [comment]} :body} :parameters :as req}]
-                     (ok (posts-db/add-post-comment! (assoc comment :author (common/user-id req)))))}}]
+                     (-> (assoc comment :author (common/user-id req))
+                         (posts-db/add-post-comment!)
+                         (ok)))}}]
     ["/media"
      {:post
       {:summary    "add a media attachment"
