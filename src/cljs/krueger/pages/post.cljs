@@ -27,12 +27,22 @@
     (update db :edit/comment assoc [post parent] comment)))
 
 (rf/reg-event-db
+  ::update-edit
+  (fn [db [_ k content]]
+    (assoc-in db [:edit/comment k :content] content)))
+
+(rf/reg-event-db
   ::stop-edit
   (fn [db [_ k {:keys [id]}]]
     (let [comment (get-in db [:edit/comment k])]
       (-> db
           (update-in [::post :comments] (fnil conj []) (assoc comment :id id))
           (update :edit/comment dissoc k)))))
+
+(rf/reg-sub
+  ::edit-in-progress?
+  (fn [db [_ k]]
+    (get-in db [:edit/comment k])))
 
 (kf/reg-event-fx
   ::submit-comment
@@ -53,10 +63,10 @@
    [:> ui/Form.Field
     [:textarea
      {:placeholder (term :post/comment)
-      :on-blur     #(rf/dispatch [::add-edit
-                                  {:post    post-id
-                                   :parent  parent-comment-id
-                                   :content (-> % .-target .-value)}])}]]
+      :on-blur     #(rf/dispatch
+                      [::update-edit
+                       [post-id parent-comment-id]
+                       (-> % .-target .-value)])}]]
    [:> ui/Form.Field
     [widgets/ajax-button
      {:primary     true
@@ -65,13 +75,14 @@
      (term :submit)]]])
 
 (defn comment-reply [post-id comment-id]
-  (r/with-let [expanded? (r/atom false)]
-    (if @expanded?
-      [submit-form post-id comment-id]
-      [:> ui/Button
-       {:primary  true
-        :on-click #(reset! expanded? true)}
-       (term :post/comment)])))
+  (if @(rf/subscribe [::edit-in-progress? [post-id comment-id]])
+    [submit-form post-id comment-id]
+    [:> ui/Button
+     {:primary  true
+      :on-click #(rf/dispatch [::add-edit
+                               {:post   post-id
+                                :parent comment-id}])}
+     (term :post/comment)]))
 
 (defn comment-content [post-id {:keys [id content]}]
   [:div.comment
