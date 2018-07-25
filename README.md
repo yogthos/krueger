@@ -11,7 +11,8 @@ Krueger uses PostgreSQL as the persistence layer
 Create a local configuration file called `dev-config.edn`, and set the database connection there:
 
 ```clojure
-{:database-url "postgresql://localhost/krueger?user=<user>&password=<pass>"}
+{:database-url "postgresql://localhost/krueger?user=<user>&password=<pass>"
+ :dictionary "dictionary.edn"}
 ```
 
 Next run the migrations:
