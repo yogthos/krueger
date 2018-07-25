@@ -23,18 +23,16 @@
    [auth/login-modal]
    [auth/registration-modal]
    [common/error-modal]
-   [:> ui/Grid
-    {:centered true
-     :columns 2}
-    [:> ui/Grid.Column
-     [kf/switch-route (fn [route] (get-in route [:data :name]))
-      :home home-page
-      :comments comments-page
-      :messages messages-page
-      :post post-page
-      :submit-post submit-post-page
-      :profile profile-page
-      nil nil]]]])
+   [:> ui/Container
+    {:text true}
+    [kf/switch-route (fn [route] (get-in route [:data :name]))
+     :home home-page
+     :comments comments-page
+     :messages messages-page
+     :post post-page
+     :submit-post submit-post-page
+     :profile profile-page
+     nil nil]]])
 
 (defn init! []
   (kf/start! {:router         (routing/->ReititRouter routing/router)

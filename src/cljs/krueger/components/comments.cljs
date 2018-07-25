@@ -114,7 +114,7 @@
     [:> ui/Comment.Author {:as "a"} author]
     [:> ui/Comment.Metadata [:div (ago timestamp)]]
     [:> ui/Comment.Text content]
-    [:> ui/Comment.Metadata
+    [:> ui/Comment.Text
      [:div
       (when @(rf/subscribe [:auth/user])
         [comment-reply post-id id])
