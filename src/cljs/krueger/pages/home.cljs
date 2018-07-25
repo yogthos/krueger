@@ -13,30 +13,29 @@
     (::posts db)))
 
 (defn post [{:keys [id author url preview title comment-count timestamp]}]
-  [:> ui/List.Item
+  [:> ui/Feed.Event
    (when preview
-     [:> ui/Image {:src preview}])
-   [:> ui/List.Content
-    [:> ui/List.Header {:as "header"}
+     [:> Feed.Label {:image preview}])
+   [:> ui/Feed.Content
+    [:> ui/Feed.Summary
      (if url
        [:a {:href url} [:h3 title]]
        [:span title])]
-    [:a
-     {:href (str "/post/" id)}
-     [:> ui/List.Description
-      (str (term :post/by) " " author
-           " | " (ago timestamp)
-           " | " (if (pos? comment-count)
-                   (str comment-count " " (term :post/comments))
-                   (term :post/no-comments)))]]]])
+
+    [:span
+     (term :post/by) " " [:a {:href (str "/profile/" author)} author]
+     " | " (ago timestamp)
+     " | " [:a
+            {:href (str "/post/" id)}
+            (if (pos? comment-count)
+              (str comment-count " " (term :post/comments))
+              (term :post/no-comments))]]]])
 
 (defn home-page []
-  [:> ui/Container
-   {:fluid true}
-   [:> ui/List
-    (for [post-data @(rf/subscribe [::posts])]
-      ^{:key post-data}
-      [post post-data])]])
+  [:> ui/Feed
+   (for [post-data @(rf/subscribe [::posts])]
+     ^{:key post-data}
+     [post post-data])])
 
 (kf/reg-chain
   ::fetch-posts

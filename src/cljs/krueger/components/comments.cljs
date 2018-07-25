@@ -81,24 +81,26 @@
         [:> ui/Form.Field
          [:> ui/Button
           {:basic    true
+           :size     "tiny"
            :color    "red"
            :floated  "left"
            :on-click #(rf/dispatch [::cancel-edit comment-id])}
           (term :cancel)]])
       [:> ui/Button
        {:basic    true
+        :size     "tiny"
         :disabled (or
                     (empty? (:content @(rf/subscribe [::edit-in-progress comment-id])))
                     @(rf/subscribe [:http/loading? :submit-comment]))
         :on-click #(submit-action comment-id)}
-       (term :post/comment)]]]))
+       (term :submit)]]]))
 
 (defn comment-reply [post-id comment-id]
   (if @(rf/subscribe [::edit-in-progress [post-id comment-id]])
     [submit-form post-id comment-id]
     [:> ui/Button
      {:basic    true
-      :size     "mini"
+      :size     "tiny"
       :on-click #(rf/dispatch [::add-edit
                                {:post   post-id
                                 :parent comment-id}])}
