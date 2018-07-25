@@ -23,10 +23,12 @@
         ^{:key id}
         [:> ui/Label @(rf/subscribe [:tag/label id])])]
      (when text [:p text])
-     [:p (term :post/submitted-by)
-      " " author
-      " " (ago timestamp)
-      " " (term :post/ago)]]
+     (let [ago-time (ago timestamp)]
+       [:p (term :post/submitted-by)
+        " " author
+        " " ago-time
+        (if (not= "now" ago-time)
+          (str " " (term :post/ago)))])]
     [spinner]))
 
 (defn post-page []
