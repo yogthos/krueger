@@ -34,12 +34,17 @@
     [:div
      [post-content post]
      [comments/submit-form (:id post) nil]
-     [:> ui/Header
-      {:as       "h3"
-       :dividing true}
-      "Comments"]
-     (when-let [comments @(rf/subscribe [:post/comments])]
-       [comments/comments-list (:id post) (comments/group-comments comments)])]))
+     (if-let [comments (not-empty @(rf/subscribe [:post/comments]))]
+       [:div
+        [:> ui/Header
+         {:as       "h3"
+          :dividing true}
+         "Comments"]
+        [comments/comments-list (:id post) (comments/group-comments comments)]]
+       [:> ui/Header
+        {:as       "h3"
+         :dividing true}
+        "No comments"])]))
 
 (kf/reg-chain
   ::fetch-post

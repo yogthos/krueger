@@ -26,8 +26,16 @@
 
 (rf/reg-event-db
   ::add-edit
-  (fn [db [_ {:keys [post parent] :as comment}]]
-    (update db :edit/comment assoc [post parent] comment)))
+  (fn [db [_ [post-id parent-comment-id]]]
+
+    (println "parent" post-id parent-comment-id "\n"
+             (:edit/comment
+               (update db :edit/comment assoc [post-id parent-comment-id]
+                       {:post   post-id
+                        :parent parent-comment-id})))
+    (update db :edit/comment assoc [post-id parent-comment-id]
+            {:post   post-id
+             :parent parent-comment-id})))
 
 (rf/reg-event-db
   ::update-edit
@@ -66,12 +74,19 @@
     (rf/dispatch [::submit-comment comment-id])
     (rf/dispatch [:auth/login-modal-shown true])))
 
+(defn empty-comment? [comment-id]
+  (empty? (:content @(rf/subscribe [::edit-in-progress comment-id]))))
+
 (defn submit-form [post-id parent-comment-id]
   (let [comment-id [post-id parent-comment-id]]
     [:> ui/Form
      [:> ui/Form.Field
       [:textarea
        {:placeholder (term :post/comment)
+        :on-focus    #(when (empty-comment? comment-id)
+                        (rf/dispatch [::add-edit comment-id]))
+        :on-blur     #(when (empty-comment? comment-id)
+                        (rf/dispatch [::cancel-edit]))
         :on-change   #(rf/dispatch
                         [::update-edit
                          comment-id
@@ -90,7 +105,7 @@
        {:basic    true
         :size     "tiny"
         :disabled (or
-                    (empty? (:content @(rf/subscribe [::edit-in-progress comment-id])))
+                    (empty-comment? comment-id)
                     @(rf/subscribe [:http/loading? :submit-comment]))
         :on-click #(submit-action comment-id)}
        (term :submit)]]]))
@@ -101,9 +116,7 @@
     [:> ui/Button
      {:basic    true
       :size     "tiny"
-      :on-click #(rf/dispatch [::add-edit
-                               {:post   post-id
-                                :parent comment-id}])}
+      :on-click #(rf/dispatch [::add-edit [post-id comment-id]])}
      (term :post/comment)]))
 
 (declare comments-list)
