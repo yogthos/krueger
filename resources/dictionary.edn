@@ -16,7 +16,7 @@
                  :logout   "Logout"
                  :register "Register"}
   :post         {:by           "by"
-                 :comment      "leave a comment"
+                 :comment      "reply"
                  :comments     "comments"
                  :no-comments  "no comments"
                  :submitted-by "submitted by"

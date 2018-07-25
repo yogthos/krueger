@@ -1,7 +1,7 @@
 (ns krueger.core
   (:require
+    [cljsjs.semantic-ui-react :as ui]
     [kee-frame.core :as kf]
-    [ajax.core :refer [GET POST]]
     [krueger.ajax :refer [load-interceptors!]]
     [krueger.auth]
     [krueger.common :as common]
@@ -23,14 +23,18 @@
    [auth/login-modal]
    [auth/registration-modal]
    [common/error-modal]
-   [kf/switch-route (fn [route] (get-in route [:data :name]))
-    :home home-page
-    :comments comments-page
-    :messages messages-page
-    :post post-page
-    :submit-post submit-post-page
-    :profile profile-page
-    nil nil]])
+   [:> ui/Grid
+    {:centered true
+     :columns 2}
+    [:> ui/Grid.Column
+     [kf/switch-route (fn [route] (get-in route [:data :name]))
+      :home home-page
+      :comments comments-page
+      :messages messages-page
+      :post post-page
+      :submit-post submit-post-page
+      :profile profile-page
+      nil nil]]]])
 
 (defn init! []
   (kf/start! {:router         (routing/->ReititRouter routing/router)

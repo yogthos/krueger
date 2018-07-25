@@ -4,6 +4,11 @@ body {
     height: 100%;
 }
 
+.comment {
+    padding-left: 30px;
+}
+
+;;spinner
 .sk-circle {
   margin: 100px auto;
   width: 40px;

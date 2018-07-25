@@ -50,8 +50,6 @@
    (s/optional-key :preview) (s/maybe String)
    :title                    String
    (s/optional-key :url)     (s/maybe String)
-   :timestamp                Date
-   :upvotes                  s/Num
-   :downvotes                s/Num})
+   :timestamp                Date})
 
 (s/defschema PostPreviews {:posts [PostPreview]})
