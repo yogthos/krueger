@@ -19,7 +19,7 @@
   (link-comments (group-by :parent comments)))
 
 (rf/reg-sub
-  ::comments
+  :post/comments
   :<- [:post/content]
   (fn [post _]
     (:comments post)))
@@ -117,14 +117,13 @@
       (when @(rf/subscribe [:auth/user])
         [comment-reply post-id id])
       (when replies
-        [comments-list post-id id replies])]]]])
+        [comments-list post-id replies])]]]])
 
-(defn comments-list [post-id]
-  (when-let [comments @(rf/subscribe [::comments])]
-    [:> ui/Comment.Group
-     (for [comment-data comments]
-       ^{:key comment-data}
-       [comment-content post-id comment-data])]))
+(defn comments-list [post-id comments]
+  [:> ui/Comment.Group
+   (for [comment-data comments]
+     ^{:key comment-data}
+     [comment-content post-id comment-data])])
 
 
 

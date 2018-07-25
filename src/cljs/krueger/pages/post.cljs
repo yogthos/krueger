@@ -38,7 +38,8 @@
       {:as       "h3"
        :dividing true}
       "Comments"]
-     [comments/comments-list (:id post)]]))
+     (when-let [comments @(rf/subscribe [:post/comments])]
+       [comments/comments-list (:id post) (comments/group-comments comments)])]))
 
 (kf/reg-chain
   ::fetch-post
