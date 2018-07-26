@@ -12,7 +12,7 @@
 (rf/reg-sub
   :post/content
   (fn [db _]
-    (::post db)))
+    (:post/content db)))
 
 
 (defn post-content [post]
@@ -23,12 +23,9 @@
         ^{:key id}
         [:> ui/Label @(rf/subscribe [:tag/label id])])]
      (when text [:p text])
-     (let [ago-time (ago timestamp)]
-       [:p (term :post/submitted-by)
-        " " author
-        " " ago-time
-        (if (not= "now" ago-time)
-          (str " " (term :post/ago)))])]
+     [:p (term :post/submitted-by)
+      " " author
+      " " (ago timestamp)]]
     [spinner]))
 
 (defn post-page []
@@ -42,7 +39,7 @@
          {:as       "h3"
           :dividing true}
          "Comments"]
-        [comments/comments-list (:id post) (comments/group-comments comments)]]
+        [comments/comments-list (:id post) comments]]
        [:> ui/Header
         {:as       "h3"
          :dividing true}
@@ -55,7 +52,7 @@
             :url         (str "/api/post/" post-id)
             :error-event [:common/set-error]}})
   (fn [{:keys [db]} [_ post]]
-    {:db (assoc db ::post post)}))
+    {:db (assoc db :post/content (update post :comments comments/group-comments))}))
 
 (kf/reg-controller
   ::post-controller

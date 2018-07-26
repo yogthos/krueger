@@ -1,19 +1,21 @@
 (ns krueger.components.comments
   (:require
-    [krueger.components.widgets :as widgets]
+    [cljsjs.semantic-ui-react :as ui]
+    [clojure.walk :refer [prewalk]]
     [krueger.terminology :refer [term]]
     [krueger.time :refer [ago]]
-    [cljsjs.semantic-ui-react :as ui]
     [reagent.core :as r]
     [re-frame.core :as rf]
     [kee-frame.core :as kf]))
 
 (defn link-comments [grouped-comments & [parent]]
   (let [root-comments (get grouped-comments parent)]
-    (for [{:keys [id] :as comment} root-comments]
-      (assoc comment
-        :replies
-        (link-comments grouped-comments id)))))
+    (mapv
+      (fn [{:keys [id] :as comment}]
+        (assoc comment
+          :replies
+          (link-comments grouped-comments id)))
+      root-comments)))
 
 (defn group-comments [comments]
   (link-comments (group-by :parent comments)))
@@ -24,15 +26,23 @@
   (fn [post _]
     (:comments post)))
 
+(rf/reg-event-fx
+  ::add-comment
+  (fn [{db :db} [_ {:keys [parent] :as comment}]]
+    {:db (update-in db [:post/content :comments]
+                    (fn [comments]
+                      (if parent
+                        (prewalk
+                          (fn [node]
+                            (if (= (:id node) parent)
+                              (update node :replies conj comment)
+                              node))
+                          comments)
+                        (conj comments comment))))}))
+
 (rf/reg-event-db
   ::add-edit
   (fn [db [_ [post-id parent-comment-id]]]
-
-    (println "parent" post-id parent-comment-id "\n"
-             (:edit/comment
-               (update db :edit/comment assoc [post-id parent-comment-id]
-                       {:post   post-id
-                        :parent parent-comment-id})))
     (update db :edit/comment assoc [post-id parent-comment-id]
             {:post   post-id
              :parent parent-comment-id})))
@@ -42,13 +52,14 @@
   (fn [db [_ k content]]
     (assoc-in db [:edit/comment k :content] content)))
 
-(rf/reg-event-db
-  ::stop-edit
-  (fn [db [_ k {:keys [id]}]]
-    (let [comment (get-in db [:edit/comment k])]
-      (-> db
-          (update-in [::post :comments] (fnil conj []) (assoc comment :id id))
-          (update :edit/comment dissoc k)))))
+(rf/reg-event-fx
+  ::finish-edit
+  (fn [{db :db} [_ k {:keys [id]}]]
+    (let [comment (assoc (get-in db [:edit/comment k])
+                    :id id
+                    :timestamp (js/Date.))]
+      {:db       (update db :edit/comment dissoc k)
+       :dispatch [::add-comment comment]})))
 
 (rf/reg-event-db
   ::cancel-edit
@@ -67,7 +78,7 @@
             :url           "/api/restricted/comment"
             :resource-id   :submit-comment
             :params        {:comment (get-in db [:edit/comment k])}
-            :success-event [::stop-edit k]}}))
+            :success-event [::finish-edit k]}}))
 
 (defn submit-action [comment-id]
   (if @(rf/subscribe [:auth/user])
@@ -87,6 +98,7 @@
                         (rf/dispatch [::add-edit comment-id]))
         :on-blur     #(when (empty-comment? comment-id)
                         (rf/dispatch [::cancel-edit]))
+        :value       (:content @(rf/subscribe [::edit-in-progress comment-id]))
         :on-change   #(rf/dispatch
                         [::update-edit
                          comment-id
@@ -139,36 +151,3 @@
    (for [comment-data comments]
      ^{:key comment-data}
      [comment-content post-id comment-data])])
-
-
-
-#_#_#_(declare comment-component)
-
-    ;;TODO format comments using markdown
-    (defn comment-component [{:keys [id author timestamp content upvotes downvotes children]}]
-      (r/with-let [expanded? (atom true)
-                   show-reply? (atom false)]
-        [:div
-         [:div.comment
-          [:p.text-muted
-           [:span.expand.clickable
-            {:on-click #(do (swap! expanded? not) nil)}
-            (if @expanded? "[–]" "[+]")]
-           " "
-           [:a {:href (str "/user/" author)} author] " " (- upvotes downvotes) " points"]
-          (when @expanded?
-            [:div
-             [:p content]
-             [:p [:span.clickable {:on-click #(do (swap! show-reply? not) nil)} [:em "reply"]]]
-             (when @show-reply?
-               [comment-editor id])
-             (for [comment children]
-               ^{:key (:id comment)}
-               [comment-component comment])])]]))
-
-    (defn render-comments [comments]
-      (let [grouped-comments (group-comments comments)]
-        [:div
-         (for [comment grouped-comments]
-           ^{:key (:id comment)}
-           [comment-component comment])]))

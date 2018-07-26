@@ -11,7 +11,7 @@
           (fn [_ [in-period label]]
             (let [period (in-period interval)]
               (if (pos? period)
-                (reduced (str period " " label)))))
+                (reduced (str period " " label " ago")))))
           [[t/in-years "years"]
            [t/in-months "months"]
            [t/in-days "days"]
