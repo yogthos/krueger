@@ -90,7 +90,7 @@
 
 (defn submit-form [post-id parent-comment-id]
   (let [comment-id [post-id parent-comment-id]]
-    [:> ui/Form
+    [:> ui/Form {:reply true}
      [:> ui/Form.Field
       [:textarea
        {:placeholder (term :post/comment)
@@ -131,20 +131,76 @@
       :on-click #(rf/dispatch [::add-edit [post-id comment-id]])}
      (term :post/comment)]))
 
+(rf/reg-event-db
+  :comment/update-votes
+  (fn [db [_ id f]]
+    (update-in
+      db
+      [:post/content :comments]
+      #(prewalk
+         (fn [node]
+           (if (= (:id node) id)
+             (f node)
+             node))
+         %))))
+
+(defn vote [id action]
+  {:http
+   {:method        :post
+    :url           (case action
+                     :upvote "/api/restricted/up-vote-comment"
+                     :downvote "/api/restricted/down-vote-comment")
+    :params        {:id id}
+    :success-event [:comment/update-votes
+                    (case action
+                      :upvote #(update % :upvotes inc)
+                      :downvote #(update % :downvotes inc))]}})
+
+(rf/reg-event-fx
+  :comment/upvote
+  (fn [_ [_ id]]
+    (vote id :upvote)))
+
+(rf/reg-event-fx
+  :comment/downvote
+  (fn [_ [_ id]]
+    (vote id :downvote)))
+
+(defn comment-score [{:keys [id upvotes downvotes]}]
+  (let [user @(rf/subscribe [:auth/user])]
+    [:> ui/Comment.Metadata
+     [:div
+      (when user
+        [:span
+         {:on-click #(rf/dispatch [:comment/upvote id])}
+         [:i.fas.fa-angle-up {:cursor "pointer"}]])
+      [:div (if (and upvotes downvotes) (js/Math.ceil (/ upvotes downvotes)) "0")]
+      (when user
+        [:span
+         {:on-click #(rf/dispatch [:comment/downvote id])}
+         [:i.fas.fa-angle-down {:cursor "pointer"}]])]]))
+
 (declare comments-list)
 
-(defn comment-content [post-id {:keys [id author content replies timestamp]}]
+(defn comment-content [post-id {:keys [id author content replies timestamp] :as comment}]
   [:> ui/Comment
    [:> ui/Comment.Content
-    [:> ui/Comment.Author {:as "a"} author]
-    [:> ui/Comment.Metadata [:div (ago timestamp)]]
-    [:> ui/Comment.Text content]
-    [:> ui/Comment.Text
-     [:div
-      (when @(rf/subscribe [:auth/user])
-        [comment-reply post-id id])
-      (when replies
-        [comments-list post-id replies])]]]])
+    [:div
+     {:style {:display      "inline-block"
+              :float        "left"
+              :margin-right "10px"
+              :margin-top   "-12px"}}
+     [comment-score comment]]
+    [:div
+     [:> ui/Comment.Author {:as "a"} author]
+     [:> ui/Comment.Metadata [:div (ago timestamp)]]
+     [:> ui/Comment.Text content]
+     [:> ui/Comment.Text
+      [:div
+       (when @(rf/subscribe [:auth/user])
+         [comment-reply post-id id])
+       (when replies
+         [comments-list post-id replies])]]]]])
 
 (defn comments-list [post-id comments]
   [:> ui/Comment.Group

@@ -151,7 +151,7 @@
     ["/up-vote-comment"
      {:post
       {:summary    "up-vote the comment with the given id"
-       :parameters {:body {:id s/Str}}
+       :parameters {:body {:id s/Num}}
        :responses  {200 {:body common/Success}}
        :handler    (fn [{{{:keys [id]} :body} :parameters :as req}]
                      (do
@@ -160,7 +160,7 @@
     ["/down-vote-comment"
      {:post
       {:summary    "down-vote the post with the given id"
-       :parameters {:body {:id s/Str}}
+       :parameters {:body {:id s/Num}}
        :responses  {200 {:body common/Success}}
        :handler    (fn [{{{:keys [id]} :body} :parameters :as req}]
                      (do

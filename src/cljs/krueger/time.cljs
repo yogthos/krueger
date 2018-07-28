@@ -17,7 +17,7 @@
            [t/in-days "days"]
            [t/in-hours "hours"]
            [t/in-minutes "minutes"]]))
-      (str "now"))))
+      (str "just now"))))
 
 
 
