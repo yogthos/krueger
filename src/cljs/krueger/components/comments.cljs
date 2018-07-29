@@ -174,7 +174,13 @@
         [:span
          {:on-click #(rf/dispatch [:comment/upvote id])}
          [:i.fas.fa-angle-up {:cursor "pointer"}]])
-      [:div (if (and upvotes downvotes) (js/Math.ceil (/ upvotes downvotes)) "0")]
+      [:div (str
+              (cond
+                (and (pos? upvotes) (pos? downvotes))
+                (js/Math.ceil (/ upvotes downvotes))
+                (pos? upvotes) upvotes
+                (pos? downvotes) downvotes
+                :else 0))]
       (when user
         [:span
          {:on-click #(rf/dispatch [:comment/downvote id])}

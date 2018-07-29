@@ -2,8 +2,8 @@ CREATE TABLE comments
 (
   post          INTEGER,
   id            SERIAL PRIMARY KEY,
-  upvotes       INTEGER,
-  downvotes     INTEGER,
+  upvotes       INTEGER default 0,
+  downvotes     INTEGER default 0,
   parent        INTEGER,
   author        TEXT      NOT NULL,
   content       CITEXT    NOT NULL,
