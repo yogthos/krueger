@@ -28,10 +28,10 @@
 
 (defn save-post! [post]
   (add-post!
-    (merge {:text      nil
-            :url       nil
-            :preview   nil
-            :tags      nil}
+    (merge {:text    nil
+            :url     nil
+            :preview nil
+            :tags    nil}
            post)))
 
 (defn get-post-by-slug [slug]
@@ -41,24 +41,24 @@
         (update :tags #(when (not-empty %) (tags-by-ids {:ids %})))
         (assoc :comments (get-comments {:post id})))))
 
-(defn upvote-comment! [email id]
+(defn upvote-comment! [email commentid]
   (jdbc/with-db-transaction [t-conn *db*]
-    (when-not (upvoted? t-conn {:email email :id id})
-      (upvote! t-conn {:id id})
+    (when-not (upvoted? t-conn {:email email :commentid commentid})
+      (upvote! t-conn {:id commentid})
       (set-votes! t-conn {:upvoted   true
                           :downvoted false
                           :email     email
-                          :id        id}))))
+                          :commentid commentid}))))
 
-(defn downvote-comment! [email id]
+(defn downvote-comment! [email commentid]
   (jdbc/with-db-transaction [t-conn *db*]
-    (when-not (upvoted? t-conn {:email email :postid id})
-      (downvote! t-conn {:id id})
+    (when-not (upvoted? t-conn {:email email :commentid commentid})
+      (downvote! t-conn {:id commentid})
       (set-votes! t-conn
                   {:upvoted   false
                    :downvoted true
                    :email     email
-                   :id        id}))))
+                   :commentid commentid}))))
 
 (defn add-post-comment! [comment]
   (-> (merge {:parent nil} comment)

@@ -20,7 +20,7 @@ UPDATE comments
 -- :doc selects the upvoted flag for the user and comment
 SELECT upvoted
   FROM comment_votes
-  WHERE userid    = :userid
+  WHERE email     = :email
   AND   commentid = :commentid
 
 -- :name downvote! :! :n
@@ -33,12 +33,12 @@ UPDATE comments
 -- :doc selects the downvoted flag for the user and post
 SELECT downvoted
   FROM comment_votes
-  WHERE userid    = :userid
+  WHERE email     = :email
   AND   commentid = :commentid
 
 --:name set-votes! :! :n
 -- :doc sets the votes for the user and post
 UPDATE comment_votes
   SET upvoted     = :upvoted, downvoted = :downvoted
-  WHERE userid    = :userid
+  WHERE email     = :email
   AND   commentid = :commentid
