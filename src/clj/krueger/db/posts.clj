@@ -41,23 +41,23 @@
         (update :tags #(when (not-empty %) (tags-by-ids {:ids %})))
         (assoc :comments (get-comments {:post id})))))
 
-(defn upvote-comment! [email commentid]
+(defn upvote-comment! [userid commentid]
   (jdbc/with-db-transaction [t-conn *db*]
-    (when-not (upvoted? t-conn {:email email :commentid commentid})
+    (when-not (upvoted? t-conn {:userid userid :commentid commentid})
       (upvote! t-conn {:id commentid})
       (set-votes! t-conn {:upvoted   true
                           :downvoted false
-                          :email     email
+                          :userid    userid
                           :commentid commentid}))))
 
-(defn downvote-comment! [email commentid]
+(defn downvote-comment! [userid commentid]
   (jdbc/with-db-transaction [t-conn *db*]
-    (when-not (upvoted? t-conn {:email email :commentid commentid})
+    (when-not (upvoted? t-conn {:userid userid :commentid commentid})
       (downvote! t-conn {:id commentid})
       (set-votes! t-conn
                   {:upvoted   false
                    :downvoted true
-                   :email     email
+                   :userid    userid
                    :commentid commentid}))))
 
 (defn add-post-comment! [comment]

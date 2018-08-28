@@ -15,7 +15,8 @@
            (java.util UUID)))
 
 (def User
-  {:screenname                      s/Str
+  {:id                              s/Num
+   :screenname                      s/Str
    :email                           s/Str
    :admin                           (s/maybe s/Bool)
    :moderator                       (s/maybe s/Bool)
@@ -50,7 +51,7 @@
 
 (defn authenticate [email pass]
   (timed
-    (when-let [user (db/get-user {:email email})]
+    (when-let [user (db/get-user-by-email {:email email})]
       (when (hashers/check pass (:pass user))
         (dissoc user :pass)))
     500))

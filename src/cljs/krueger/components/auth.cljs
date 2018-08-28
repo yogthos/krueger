@@ -52,7 +52,7 @@
     [:> ui/Modal.Description
      [:> ui/Form
       [:> ui/Form.Field
-       [widgets/password-input
+       [widgets/text-input
         {:label (term :registration/name)
          :path  [::registration :screenname]}]]
       [:> ui/Form.Field

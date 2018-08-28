@@ -5,7 +5,7 @@ CREATE TABLE comments
   upvotes       INTEGER default 0,
   downvotes     INTEGER default 0,
   parent        INTEGER,
-  author        TEXT      NOT NULL,
+  author        INTEGER   NOT NULL,
   content       CITEXT    NOT NULL,
   timestamp     TIMESTAMP NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
   search_vector TSVECTOR

@@ -8,6 +8,8 @@
     [re-frame.core :as rf]
     [kee-frame.core :as kf]))
 
+; todo render comments more intelligently https://gist.github.com/SVMBrown/64284f5a5e087528bb8623629c8d5436
+
 (defn link-comments [grouped-comments & [parent]]
   (let [root-comments (get grouped-comments parent)]
     (mapv

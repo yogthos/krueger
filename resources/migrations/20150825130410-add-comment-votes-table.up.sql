@@ -1,5 +1,5 @@
 CREATE TABLE comment_votes
-(email VARCHAR(20),
+(userid INTEGER,
  commentid INTEGER,
  upvoted BOOLEAN,
  downvoted BOOLEAN);

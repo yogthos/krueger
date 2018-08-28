@@ -5,13 +5,18 @@ INSERT INTO users
   VALUES (:screenname, :email, :pass, :token, :active)
 
 -- :name update-user! :! :n
--- :doc update an existing user record with the given email
+-- :doc update an existing user record with the given userid
 UPDATE users
   SET screenname = :screenname
-  WHERE email = :email
+  WHERE userid = :userid
 
--- :name get-user :? :1
+-- :name get-user-by-id :? :1
 -- :doc retrieve a user given the id.
+SELECT * FROM users
+  WHERE id = :userid
+
+-- :name get-user-by-email :? :1
+-- :doc retrieve a user given the email.
 SELECT * FROM users
   WHERE email = :email
 
@@ -30,3 +35,11 @@ select * from users where token=?
 -- :name finish-registration :! :n
 -- :doc activates the account and removes the registration token
 update users set token = null, active = true where token = ?
+
+-- :name user-follows* :? :*
+-- :doc ids of users followed by userid
+select follows from user_graph where userid = :userid
+
+-- :name user-followed-by* :? :*
+-- :doc ids of users who follow userid
+select userid from user_graph where follows = :userid

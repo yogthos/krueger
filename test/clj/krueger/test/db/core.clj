@@ -34,3 +34,4 @@
             :last_login nil
             :is_active  nil}
            (db/get-user t-conn {:id "1"})))))
+

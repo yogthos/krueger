@@ -1,7 +1,7 @@
 CREATE TABLE posts
 (
-  id            SERIAL PRIMARY KEY,
-  author        TEXT      NOT NULL,
+  id            SERIAL    PRIMARY KEY,
+  author        INTEGER   NOT NULL,
   title         CITEXT    NOT NULL,
   preview       CITEXT,
   url           CITEXT,

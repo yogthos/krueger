@@ -1,1 +1,1 @@
-DROP TABLE post_votes;
+DROP TABLE comment_votes;

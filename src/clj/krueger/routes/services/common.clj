@@ -7,7 +7,7 @@
 (s/defschema Success {:result s/Keyword})
 
 (defn user-id [req]
-  (get-in req [:session :identity :email]))
+  (get-in req [:session :identity :id]))
 
 (defmacro handler
   "wraps handler in a try-catch block with built in logging"

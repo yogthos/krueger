@@ -13,3 +13,11 @@
         (finish-registration t-conn {:token token})
         user)
       (throw (IllegalArgumentException. "invalid registration token")))))
+
+(defn user-follows [userid]
+  (user-follows* {:userid userid}))
+
+(defn user-followed-by [userid]
+  (user-followed-by* {:userid userid}))
+
+

@@ -11,7 +11,7 @@
 (s/defschema Comment
   {:id                      s/Num
    (s/optional-key :parent) (s/maybe s/Num)
-   :author                  String
+   :author                  s/Num
    :content                 String
    :timestamp               Date
    :upvotes                 (s/maybe s/Num)
@@ -45,7 +45,7 @@
 
 (s/defschema PostPreview
   {:id                       String
-   :author                   String
+   :author                   s/Num
    :tags                     [s/Num]
    (s/optional-key :preview) (s/maybe String)
    :title                    String
