@@ -22,7 +22,7 @@
 (defn navbar []
   [:> ui/Menu
    [nav-link :home [:span (term :nav/home)] {}]
-   (if-let [username (:screenname @(rf/subscribe [:auth/user]))]
+   (if-let [username (:id @(rf/subscribe [:auth/user]))]
      [:> ui/Menu.Menu {:position "right"}
       [nav-link :submit-post [:i.fas.fa-feather] {:icon true}]
       [nav-link :comments [:i.far.fa-comments] {:icon true}]

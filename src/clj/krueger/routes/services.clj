@@ -62,20 +62,22 @@
    ["/register"
     {:post
      {:summary    "handles new user registration"
-      :parameters {:body {:screenname   s/Str
+      :parameters {:body {:id           s/Str
                           :email        s/Str
                           :pass         s/Str
                           :pass-confirm s/Str}}
       :responses  {200 {:body s/Any}}
-      :handler    (fn [{{params :body} :parameters :as req}]
-                    (ok {:result (auth/register! params req)}))}}]
+      :handler    (fn [{{params :body} :parameters session :session :as req}]
+                    (let [user (auth/register! params req)]
+                      (assoc (ok {:result :ok})
+                        :session (assoc session :identity user))))}}]
 
    ["/terminology"
     {:get
-     {:summary "fetch terminology"
-      :responses  {200 {:body {:terminology terminology/Terminology}}}
-      :handler (fn [_]
-                 (ok {:terminology (terminology/terminology)}))}}]
+     {:summary   "fetch terminology"
+      :responses {200 {:body {:terminology terminology/Terminology}}}
+      :handler   (fn [_]
+                   (ok {:terminology (terminology/terminology)}))}}]
 
    ["/page"
     {:get
@@ -110,8 +112,7 @@
     ["/user"
      {:put
       {:summary    "update user account"
-       :parameters {:body {:user-id                       s/Int
-                           :screenname                    s/Str
+       :parameters {:body {:id                            s/Str
                            (s/optional-key :pass)         (s/maybe s/Str)
                            (s/optional-key :pass-confirm) (s/maybe s/Str)
                            :admin                         s/Bool
@@ -121,12 +122,12 @@
 
     ["/tag"
      {:post
-      {:summary "create a new tag"
-       :parameters {:body {:label s/Str
+      {:summary    "create a new tag"
+       :parameters {:body {:label       s/Str
                            :description s/Str}}
        :responses  {200 {:body {:id s/Keyword}}}
-       :handler (fn [{{params :body} :parameters}]
-                  (posts-db/create-tag params))}}]]
+       :handler    (fn [{{params :body} :parameters}]
+                     (posts-db/create-tag params))}}]]
 
    ;; private
    ["/restricted"

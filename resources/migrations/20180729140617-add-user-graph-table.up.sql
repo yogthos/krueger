@@ -1,3 +1,3 @@
 CREATE TABLE user_graph
-(userid INTEGER,
- follows INTEGER);
+(userid VARCHAR(50),
+ follows VARCHAR(50));

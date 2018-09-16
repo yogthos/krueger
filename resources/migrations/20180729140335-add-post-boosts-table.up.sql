@@ -1,3 +1,3 @@
 CREATE TABLE post_boosts
-(userid INTEGER,
+(userid VARCHAR(50),
  postid INTEGER);

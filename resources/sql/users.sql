@@ -1,19 +1,13 @@
 -- :name create-user! :! :n
 -- :doc creates a new user record
 INSERT INTO users
-  (screenname, email, pass, token, active)
-  VALUES (:screenname, :email, :pass, :token, :active)
-
--- :name update-user! :! :n
--- :doc update an existing user record with the given userid
-UPDATE users
-  SET screenname = :screenname
-  WHERE userid = :userid
+  (id, email, pass, token, active)
+  VALUES (:id, :email, :pass, :token, :active)
 
 -- :name get-user-by-id :? :1
 -- :doc retrieve a user given the id.
 SELECT * FROM users
-  WHERE id = :userid
+  WHERE id = :id
 
 -- :name get-user-by-email :? :1
 -- :doc retrieve a user given the email.

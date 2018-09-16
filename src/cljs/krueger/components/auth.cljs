@@ -37,10 +37,10 @@
             :resource-id :register
             :params      (::registration db)
             :error-event [::registration-error]}})
-  (fn [{:keys [db]} [{:keys [user]}]]
+  (fn [{:keys [db]} _]
     {:db (-> db
              (dissoc ::registration ::show-registration)
-             (assoc :auth/user user))}))
+             (assoc :auth/user (::registration db)))}))
 
 (defn registration-modal []
   [:> ui/Modal
@@ -54,7 +54,7 @@
       [:> ui/Form.Field
        [widgets/text-input
         {:label (term :registration/name)
-         :path  [::registration :screenname]}]]
+         :path  [::registration :id]}]]
       [:> ui/Form.Field
        [widgets/email-input
         {:label (term :registration/email)

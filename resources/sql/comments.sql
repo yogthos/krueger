@@ -39,6 +39,6 @@ SELECT downvoted
 --:name set-votes! :! :n
 -- :doc sets the votes for the user and post
 UPDATE comment_votes
-  SET upvoted     = :upvoted, downvoted = :downvoted
+  SET   upvoted   = :upvoted, downvoted = :downvoted
   WHERE userid    = :userid
   AND   commentid = :commentid

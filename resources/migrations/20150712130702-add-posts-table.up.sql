@@ -1,16 +1,15 @@
 CREATE TABLE posts
-(
-  id            SERIAL    PRIMARY KEY,
-  author        INTEGER   NOT NULL,
-  title         CITEXT    NOT NULL,
-  preview       CITEXT,
-  url           CITEXT,
-  text          CITEXT,
-  tags          INTEGER[],
-  upvotes       INTEGER,
-  downvotes     INTEGER,
-  timestamp     TIMESTAMP NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-  search_vector TSVECTOR
+(id            SERIAL        PRIMARY KEY,
+ author        VARCHAR(50)   NOT NULL,
+ title         CITEXT        NOT NULL,
+ preview       CITEXT,
+ url           CITEXT,
+ text          CITEXT,
+ tags          INTEGER[],
+ upvotes       INTEGER,
+ downvotes     INTEGER,
+ timestamp     TIMESTAMP NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
+ search_vector TSVECTOR
 );
 --;;
 -- index our search vector for faster searches

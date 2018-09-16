@@ -20,7 +20,7 @@
 (defmethod handle-message :post/create [{:keys [client-id ?data]}]
   (try
     (let [response (posts-db/save-post!
-                     (assoc ?data :author (common/user-id (:userid client-id))))]
+                     (assoc ?data :author (common/user-id (:id client-id))))]
       (doseq [uid (:any (:connected-uids connection))]
         ((:send-fn connection) uid [:post/created response])))
     (catch Throwable t

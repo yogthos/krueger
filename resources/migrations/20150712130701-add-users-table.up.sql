@@ -1,7 +1,6 @@
 CREATE TABLE users
-(id serial,
- email VARCHAR(50) PRIMARY KEY,
- screenname VARCHAR(50),
+(id VARCHAR(50) PRIMARY KEY,
+ email VARCHAR(50),
  bio TEXT,
  admin BOOLEAN,
  moderator BOOLEAN,

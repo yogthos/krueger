@@ -15,8 +15,7 @@
            (java.util UUID)))
 
 (def User
-  {:id                              s/Num
-   :screenname                      s/Str
+  {:id                              s/Str
    :email                           s/Str
    :admin                           (s/maybe s/Bool)
    :moderator                       (s/maybe s/Bool)
@@ -57,7 +56,7 @@
     500))
 
 (handler register! [user {:keys [remote-addr]}]
-  (log/info "registration attempt for" (dissoc user :pass) "from" remote-addr)
+  (log/info "registration attempt for" (dissoc user :pass :pass-confirm) "from" remote-addr)
   (if-let [errors (v/validate-create-user user)]
     (do
       (log/error "error creating user:" errors)
@@ -72,14 +71,12 @@
               (assoc :active false
                      :token token)))
         :confirm-needed)
-      (do
-        (db/create-user!
-          (-> user
-              (dissoc :pass-confirm)
-              (update-in [:pass] hashers/encrypt)
-              (assoc :active true
-                     :token nil)))
-        :ok))))
+      (let [user (-> user
+                     (dissoc :pass-confirm)
+                     (update-in [:pass] hashers/encrypt)
+                     (assoc :active true :token nil))]
+        (db/create-user! user)
+        (dissoc user :pass)))))
 
 (handler update-user! [{:keys [pass] :as user}]
   (if-let [errors (v/validate-update-user user)]
@@ -113,7 +110,7 @@
   (assoc (ok {:result "ok"}) :session nil))
 
 #_(db/create-user!
-    (-> {:screenname "bob"
+    (-> {:id         "bob"
          :email      "bob@bob.com"
          :pass       "pass"}
         (dissoc :pass-confirm)
