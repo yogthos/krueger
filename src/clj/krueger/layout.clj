@@ -8,11 +8,11 @@
 
 
 (declare ^:dynamic *identity*)
-(parser/set-resource-path! (clojure.java.io/resource "templates"))
+(parser/set-resource-path! (clojure.java.io/resource "html"))
 (parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
 
 (defn render
-  "renders the HTML template located relative to resources/templates"
+  "renders the HTML template located relative to resources/html"
   [template & [params]]
   (content-type
     (ok

@@ -45,7 +45,7 @@
 
 (s/defschema PostPreview
   {:id                       s/Str
-   :author                   s/Num
+   :author                   s/Str
    :tags                     [s/Num]
    (s/optional-key :preview) (s/maybe s/Str)
    :title                    s/Str
