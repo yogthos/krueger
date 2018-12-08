@@ -4,7 +4,9 @@ Federated news
 
 ## Prerequisites
 
-Krueger uses PostgreSQL as the persistence layer
+* [JDK](https://www.azul.com/downloads/zulu/)
+* [Leiningen](https://leiningen.org/)
+* PostgreSQL
 
 ## Running
 
@@ -29,4 +31,6 @@ lein run
 
 ## License
 
-Copyright © 2018
+Krueger may be freely used under the [AGPL license](https://www.gnu.org/licenses/agpl-3.0.html). As per the AGPL, you can use Krueger for personal or commercial purposes for free, but, you must publically release any modifications to the software (under the same license).
+
+Copyright Dmitri Sotnikov © 2018
