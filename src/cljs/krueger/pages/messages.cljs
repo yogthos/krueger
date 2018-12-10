@@ -10,18 +10,27 @@
   (fn [db _]
     (::messages db)))
 
+(defn message [{:keys [id author content unread?]}]
+  [:div
+   [:p content]
+   [:p [:span "from " author]]])
+
 (defn messages-page []
   [:> ui/Container
    {:fluid true}
-   [:p "post content"]
-   [:p @(rf/subscribe [::messages])]])
+   [:div
+    (for [{:keys [id] :as m} @(rf/subscribe [::messages])]
+      ^{:key id}
+      [message m])]])
 
 (kf/reg-chain
   ::fetch-messages
   (fn [{db :db} _]
-    {:db (assoc db ::messages [{:id 1 :text "some message"}])}
+    {:db (assoc db ::messages [{:id 1
+                                :content "some message"
+                                :author "yogthos"}])}
     #_{:http {:method      :get
-              :url         "/api/page"
+              :url         "/api/messages"
               :params      {:category :all
                             :offset   0}
               :error-event [:common/set-error]}})
