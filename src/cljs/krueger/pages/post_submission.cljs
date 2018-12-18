@@ -31,6 +31,18 @@
   (fn [db _]
     (::post-error db)))
 
+(rf/reg-sub
+  ::tags
+  (fn [db _]
+    ;;todo
+    #_(::tags db)
+    [{:key   "ai"
+      :value "ai"
+      :text  "AI, Machine Learning"}
+     {:key   "clojure"
+      :value "clojure"
+      :text  "topic relating to Clojure"}]))
+
 (defn submit-post-page []
   [:> ui/Grid
    {:centered true}
@@ -44,7 +56,9 @@
       [widgets/text-input {:label (term :post/title) :path [::post :title]}]]
      ;;todo searchable typeahead tags should have lable, description, id (number)
      [:> ui/Form.Field
-      [widgets/text-input {:label (term :post/tags) :path [::post :tags]}]]
+      [widgets/dropdown {:path [::post :tags] :options @(rf/subscribe [::tags])}]
+      #_[:> ui/Container {:fluid true}]
+      #_[widgets/text-input {:label (term :post/tags) :path [::post :tags]}]]
      [:> ui/Form.Field
       [widgets/textarea {:label (term :post/text) :path [::post :text]}]]
      [widgets/error-notification ::post-error]

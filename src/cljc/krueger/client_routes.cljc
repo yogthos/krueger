@@ -2,6 +2,7 @@
 
 (def routes
   [["/" :home]
+   ["/admin" :admin]
    ["/comments" :comments]
    ["/messages" :messages]
    ["/post/:id" :post]

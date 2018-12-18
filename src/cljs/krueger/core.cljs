@@ -8,6 +8,7 @@
     [krueger.components.auth :as auth]
     [krueger.components.navbar :refer [navbar]]
     #_[krueger.feeds :as feeds]
+    [krueger.pages.admin :refer [admin-page]]
     [krueger.pages.comments :refer [comments-page]]
     [krueger.pages.home :refer [home-page]]
     [krueger.pages.messages :refer [messages-page]]
@@ -26,6 +27,7 @@
    [:> ui/Container
     {:text true}
     [kf/switch-route (fn [route] (get-in route [:data :name]))
+     :admin admin-page
      :home home-page
      :comments comments-page
      :messages messages-page

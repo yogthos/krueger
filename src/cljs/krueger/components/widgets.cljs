@@ -20,6 +20,17 @@
       :on-change #(rf/dispatch [:input/set-value path (-> % .-target .-value)])}
      opts)])
 
+(defn dropdown [{:keys [path options]}]
+  [:> ui/Dropdown
+   {:fluid     true
+    :multiple  true
+    :search    true
+    :selection true
+    :options   (clj->js options)
+    :value     (clj->js @(rf/subscribe [:input/value path]))
+    :on-change (fn [event data]
+                 (rf/dispatch [:input/set-value path (:value (js->clj data :keywordize-keys true))]))}])
+
 (defn form-input [type {:keys [label path optional?] :as opts}]
   (let [opts (dissoc opts :label :path :optional?)]
     [:div
