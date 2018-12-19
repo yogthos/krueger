@@ -56,7 +56,7 @@
       [widgets/text-input {:label (term :post/title) :path [::post :title]}]]
      ;;todo searchable typeahead tags should have lable, description, id (number)
      [:> ui/Form.Field
-      [widgets/dropdown {:path [::post :tags] :options @(rf/subscribe [::tags])}]
+      [widgets/tag-dropdown {:path [::post :tags] :options @(rf/subscribe [::tags])}]
       #_[:> ui/Container {:fluid true}]
       #_[widgets/text-input {:label (term :post/tags) :path [::post :tags]}]]
      [:> ui/Form.Field

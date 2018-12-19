@@ -10,7 +10,7 @@
 
 (s/defschema Terminology
   {:dictionary {s/Keyword {s/Keyword s/Any}}
-   :tags       {s/Num posts/Tag}})
+   :tags       [posts/Tag]})
 
 (def dictionary
   (memoize #(-> (io/resource (:dictionary env))
@@ -20,4 +20,4 @@
 
 (defn terminology []
   {:dictionary (dictionary)
-   :tags       (reduce (fn [m tag] (assoc m (:id tag) tag)) {} (posts-db/tags))})
+   :tags       (posts-db/tags)})

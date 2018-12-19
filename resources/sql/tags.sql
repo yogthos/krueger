@@ -2,12 +2,11 @@
 -- :doc select all tags
 select * from tags
 
--- :name tags-by-ids :? :*
--- :doc select tags given a list of ids
-select * from tags where id in (:v*:ids)
+-- :name tags-by-values :? :*
+-- :doc select tags given a list of values
+select * from tags where value in (:v*:values)
 
--- :name create-tag :<! :1
+-- :name create-tag :! :1
 -- :doc create a new tag for a topic
-insert into tags (label, description)
-values (:label, :description)
-returning id
+insert into tags (label, value, description)
+values (:label, :value, :description)

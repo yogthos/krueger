@@ -78,6 +78,12 @@
       :responses {200 {:body {:terminology terminology/Terminology}}}
       :handler   (fn [_]
                    (ok {:terminology (terminology/terminology)}))}}]
+   ["/tags"
+    {:get
+     {:summary   "returns currently available tags"
+      :responses {200 {:body {:tags [posts/Tag]}}}
+      :handler   (fn [_]
+                   (ok {:tags (posts-db/tags {})}))}}]
 
    ["/page"
     {:get
@@ -119,15 +125,21 @@
                            :active                        s/Bool}}
        :handler    (fn [{{params :body} :parameters}]
                      (auth/update-user! params))}}]
-
     ["/tag"
      {:post
       {:summary    "create a new tag"
        :parameters {:body {:label       s/Str
+                           :value       s/Str
                            :description s/Str}}
-       :responses  {200 {:body {:id s/Keyword}}}
+       :responses  {200 {:body {:status                   s/Keyword
+                                (s/optional-key :message) s/Str}}}
        :handler    (fn [{{params :body} :parameters}]
-                     (posts-db/create-tag params))}}]]
+                     (try
+                       (posts-db/create-tag params)
+                       (ok {:status :ok})
+                       (catch Exception e
+                         {:status  :error
+                          :message (.getMessage e)})))}}]]
 
    ;; private
    ["/restricted"

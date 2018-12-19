@@ -20,7 +20,7 @@
       :on-change #(rf/dispatch [:input/set-value path (-> % .-target .-value)])}
      opts)])
 
-(defn dropdown [{:keys [path options]}]
+(defn tag-dropdown [{:keys [path options]}]
   [:> ui/Dropdown
    {:fluid     true
     :multiple  true
