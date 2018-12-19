@@ -19,9 +19,9 @@
   (if-let [{:keys [tags title author url text timestamp]} post]
     [:div
      [:h3 (if url [:a {:href url} title] title)
-      (for [id tags]
-        ^{:key id}
-        [:> ui/Label @(rf/subscribe [:tag/label id])])]
+      (for [value tags]
+        ^{:key value}
+        [:> ui/Label @(rf/subscribe [:tag/label value])])]
      (when text [:p text])
      [:p (term :post/submitted-by)
       " " author

@@ -29,7 +29,7 @@
 ;;text for self submition/question post, e.g: how do I setup a REPL
 (s/defschema Post {:id                       s/Str
                    :author                   s/Str
-                   :tags                     [Tag]
+                   :tags                     [s/Str]
                    :title                    String
                    (s/optional-key :preview) (s/maybe s/Str)
                    (s/optional-key :url)     (s/maybe s/Str)
@@ -39,14 +39,14 @@
 
 (s/defschema PostSubmission
   {:title                 s/Str
-   (s/optional-key :tags) [s/Num]
+   (s/optional-key :tags) [s/Str]
    (s/optional-key :url)  s/Str
    (s/optional-key :text) s/Str})
 
 (s/defschema PostPreview
   {:id                       s/Str
    :author                   s/Str
-   :tags                     [s/Num]
+   :tags                     [s/Str]
    (s/optional-key :preview) (s/maybe s/Str)
    :title                    s/Str
    (s/optional-key :url)     (s/maybe s/Str)

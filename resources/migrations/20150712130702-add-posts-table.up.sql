@@ -5,7 +5,7 @@ CREATE TABLE posts
  preview       CITEXT,
  url           CITEXT,
  text          CITEXT,
- tags          INTEGER[],
+ tags          TEXT[],
  upvotes       INTEGER,
  downvotes     INTEGER,
  timestamp     TIMESTAMP NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),

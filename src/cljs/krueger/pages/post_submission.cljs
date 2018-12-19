@@ -13,7 +13,7 @@
     {:db   (dissoc db ::post)
      :http {:method      :post
             :url         "/api/restricted/post"
-            :params      {:post (update (::post db) :tags not-empty)}
+            :params      {:post (::post db)}
             :resource-id :submit-post
             :error-event [::post-error]}})
   (fn [{:keys [db]} [{:keys [id]}]]
@@ -31,6 +31,14 @@
   (fn [db _]
     (::post-error db)))
 
+(rf/reg-sub
+  ::post-ready?
+  (fn [db _]
+    (let [{:keys [url title tags text]} (::post db)]
+      (and (not-empty title)
+           (not-empty tags)
+           (or (not-empty url) (not-empty text))))))
+
 (defn submit-post-page []
   [:> ui/Grid
    {:centered true}
@@ -44,9 +52,7 @@
       [widgets/text-input {:label (term :post/title) :path [::post :title]}]]
      ;;todo searchable typeahead tags should have lable, description, id (number)
      [:> ui/Form.Field
-      [widgets/tag-dropdown {:path [::post :tags] :options @(rf/subscribe [:tags/list])}]
-      #_[:> ui/Container {:fluid true}]
-      #_[widgets/text-input {:label (term :post/tags) :path [::post :tags]}]]
+      [widgets/tag-dropdown {:path [::post :tags] :options @(rf/subscribe [:tags/list])}]]
      [:> ui/Form.Field
       [widgets/textarea {:label (term :post/text) :path [::post :text]}]]
      [widgets/error-notification ::post-error]
@@ -60,6 +66,7 @@
       [widgets/ajax-button
        {:primary     true
         :floated     "right"
+        :disabled     (not @(rf/subscribe [::post-ready?]))
         :resource-id :submit-post
         :on-click    #(rf/dispatch [::submit-post])}
        (term :submit)]]]]])

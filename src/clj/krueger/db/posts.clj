@@ -38,7 +38,6 @@
   (let [id (decode-64 slug)]
     (-> (post-by-id {:id id})
         (assoc :id slug)
-        (update :tags #(when (not-empty %) (tags-by-ids {:ids %})))
         (assoc :comments (get-comments {:post id})))))
 
 (defn upvote-comment! [userid commentid]

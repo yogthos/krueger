@@ -61,7 +61,9 @@
 (defn ajax-button [opts label]
   [:> ui/Button
    (-> opts
-       (assoc :disabled @(rf/subscribe [:http/loading? (:resource-id opts)]))
+       (assoc :disabled (or
+                          (:disabled opts)
+                          @(rf/subscribe [:http/loading? (:resource-id opts)])))
        (dissoc :resource-id))
    label])
 
