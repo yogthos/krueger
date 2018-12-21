@@ -197,7 +197,7 @@
        :responses  {200 {:body {:id s/Num}}}
        :handler    (fn [{{{:keys [message]} :body} :parameters :as req}]
                      (-> (assoc message :author (common/user-id req))
-                         (messagess-db/add-message!)
+                         (messages-db/add-message!)
                          (ok)))}}]
     ["/messages"
      {:get

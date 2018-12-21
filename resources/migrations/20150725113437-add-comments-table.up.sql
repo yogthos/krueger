@@ -5,6 +5,7 @@ CREATE TABLE comments
   upvotes       INTEGER default 0,
   downvotes     INTEGER default 0,
   parent        INTEGER,
+  removed       BOOLEAN,
   author        VARCHAR(50) NOT NULL,
   content       CITEXT      NOT NULL,
   timestamp     TIMESTAMP   NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
