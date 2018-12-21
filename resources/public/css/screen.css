@@ -4,6 +4,19 @@ body {
     height: 100%;
 }
 
+a {
+    text-decoration: none;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 0% 100%;
+    background-repeat: no-repeat;
+    background-size: 0% 2px;
+    transition: background-size .3s;
+}
+
+a:hover {
+    background-size: 100% 2px;
+}
+
 .comment {
     padding-left: 30px;
 }

@@ -26,4 +26,6 @@
                  :title        "Title:"
                  :tags         "Tags:"
                  :text         "Text:"}
-  :profile {:title "Profile"}}}
+  :message      {:comment "reply"
+                 :from    "from"}
+  :profile      {:title "Profile"}}}

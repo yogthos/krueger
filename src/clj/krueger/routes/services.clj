@@ -1,10 +1,12 @@
 (ns krueger.routes.services
   (:require
     [krueger.db.core :as db]
+    [krueger.db.messages :as messages-db]
     [krueger.db.posts :as posts-db]
     [krueger.routes.services.attachments :as attachments]
     [krueger.routes.services.auth :as auth]
     [krueger.routes.services.common :as common]
+    [krueger.routes.services.messages :as messages]
     [krueger.routes.services.posts :as posts]
     [krueger.routes.services.terminology :as terminology]
     [muuntaja.middleware :as muuntaja]
@@ -188,6 +190,26 @@
                      (-> (assoc comment :author (common/user-id req))
                          (posts-db/add-post-comment!)
                          (ok)))}}]
+    ["/message"
+     {:post
+      {:summary    "send a message to a user"
+       :parameters {:body {:message messages/Message}}
+       :responses  {200 {:body {:id s/Num}}}
+       :handler    (fn [{{{:keys [message]} :body} :parameters :as req}]
+                     (-> (assoc message :author (common/user-id req))
+                         (messagess-db/add-message!)
+                         (ok)))}}]
+    ["/messages"
+     {:get
+      {:summary    "retrieve messages for the user"
+       :parameters {:query {:all s/Bool
+                            :page s/Num}}
+       :responses  {200 {:body [messages/Message]}}
+       :handler    (fn [{{{:keys [all page]} :query} :parameters :as req}]
+                     (ok ((if all messages-db/get-messages messages-db/get-unread-messages)
+                           {:recipient (common/user-id req)
+                            :limit 100
+                            :page page})))}}]
     ["/media"
      {:post
       {:summary    "add a media attachment"
