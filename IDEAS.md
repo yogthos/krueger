@@ -28,6 +28,14 @@ show up in the timeline of the user resharing the post and become visible to the
 
 Have a view to show posts by number of reshares and the category within a given time period.
 
+### Federated identity
+
+* Each user has a home server with a private and public keys
+* user profile is encrypted using the private key
+* users can export the public key to other servers
+* servers create an account for the user locally with their public key
+* when the user logs in to a remote server it will ask the home server for the profile and try to decrypt it using the public key, if the profile decrypts successfully it confirms the identity of the user
+
 ### focus
 
 Encourage focus on local news, or small groups with shared interests.
